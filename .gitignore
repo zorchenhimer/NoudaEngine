@@ -1,0 +1,8 @@
+*.log
+*.zip
+*.pyc
+#Ignore .dat files until I figure out how I want to store stuff.
+*.dat
+Thumbs.db
+png_old/
+SpaceShooterRedux/
