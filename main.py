@@ -201,7 +201,7 @@ class GameEngine():
 						
 					e = NoudaEngine.GameObjects.Enemy()
 					p = NoudaEngine.Pathing.MovementPath(e)
-					p.load_path(FixPath('leveldata/CurveDownPath.dat'), (rand.randint(self.vars.Bounds.left, self.vars.Bounds.right), 0), 2, mirror)
+					p.load_path(FixPath('data/CurveDownPath.dat'), (rand.randint(self.vars.Bounds.left, self.vars.Bounds.right), 0), 2, mirror)
 					
 					e.set_path(p)
 					self.vars.GameEnemies.add(e)
