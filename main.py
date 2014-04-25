@@ -49,12 +49,6 @@ class GameEngine():
 			self.GameHandler_js = NoudaEngine.EventHandler.DummyJoy(None, "No Joy Found")
 			self.MenuHandler_js = self.GameHandler_js
 			self.vars.CurrentHandler_js = self.MenuHandler_js
-		
-		"""for i in range(pygame.joystick.get_count()):
-			js = pygame.joystick.Joystick(i)
-			js.init()
-			
-			Debug("Found a joystick: " + js.get_name())"""
 			
 		self.tps = cap
 		Debug("Ticks per second cap: " + str(self.tps))
@@ -115,8 +109,8 @@ class GameEngine():
 	def show_menu(self):
 		self.vars.UpperState = NoudaEngine.Globals.GameState.MENU
 		self.vars.Player.StopFire()
-		self.vars.CurrentHandler = self.MenuHandler
-		self.vars.CurrentHandler_js = self.MenuHandler_js
+		self.vars.CurrentHandler = self.Menu.KeyHandle
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle
 		
 		self.Menu.Dirty = True
 		self.Menu.update()
@@ -146,17 +140,6 @@ class GameEngine():
 		self.GameHandler_js.add_joyhold_handle(0, self.vars.Player.ToggleFire)
 		self.GameHandler_js.add_joydown_handle(2, self.vars.Player.FireBomb)
 		self.GameHandler_js.add_joydown_handle(7, self.show_menu)
-		
-		## Menu state
-		self.MenuHandler.clear_all()
-		self.MenuHandler.add_keydown_handle(pygame.K_DOWN, self.Menu.MoveDown)
-		self.MenuHandler.add_keydown_handle(pygame.K_UP, self.Menu.MoveUp)
-		self.MenuHandler.add_keydown_handle(pygame.K_RETURN, self.Menu.SelectItem)
-		
-		self.MenuHandler_js.clear_all()
-		self.MenuHandler_js.add_joydown_handle('hatposy', self.Menu.MoveUp)
-		self.MenuHandler_js.add_joydown_handle('hatnegy', self.Menu.MoveDown)
-		self.MenuHandler_js.add_joydown_handle(0, self.Menu.SelectItem)
 		
 	def start_game(self):
 		self.set_ingame_bindings()
