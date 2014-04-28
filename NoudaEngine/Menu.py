@@ -38,7 +38,7 @@ class MenuBase():
 	
 	def _init_controls(self):
 		self.KeyHandle = EventHandler.KeyHandler("Menu Key Handler")
-		self.JoyHandle = EventHandler.DummyJoy("Menu Joy Handler")
+		self.JoyHandle = EventHandler.JoyHandler("Menu Joy Handler")
 
 		## FIXME: Move this to some central place so we only do it once.  Maybe store the object in Globals?
 		if pygame.joystick.get_count() > 0:
