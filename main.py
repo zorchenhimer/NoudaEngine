@@ -84,7 +84,7 @@ class GameEngine():
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		
-		#self.vars.Player = NoudaEngine.GameObjects.Player()
+		self.vars.Player = NoudaEngine.GameObjects.Player()
 		
 		self.Menu = NoudaEngine.Menu.SimpleMenu()
 		self.Menu.set_title('Main Menu')
@@ -94,7 +94,7 @@ class GameEngine():
 		self.vars.CurrentHandler = self.Menu.KeyHandle
 		self.vars.CurrentHandler_js = self.Menu.JoyHandle
 		
-		self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
+		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
 
 		#pygame.mouse.set_visible(False)
 		Info("Init finished.")
