@@ -84,15 +84,18 @@ class GameEngine():
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		
-		self.vars.CurrentHandler = self.MenuHandler
-		
-		self.vars.Player = NoudaEngine.GameObjects.Player()
+		#self.vars.Player = NoudaEngine.GameObjects.Player()
 		
 		self.Menu = NoudaEngine.Menu.SimpleMenu()
 		self.Menu.set_title('Main Menu')
 		self.Menu.add_item(1, 'Start Game', self.m_start_game)
 		self.Menu.add_item(2, 'Exit', self.m_exit_game)
 		
+		self.vars.CurrentHandler = self.Menu.KeyHandle
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle
+		
+		self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
+
 		#pygame.mouse.set_visible(False)
 		Info("Init finished.")
 	
@@ -140,7 +143,7 @@ class GameEngine():
 		self.GameHandler_js.add_joyhold_handle(0, self.vars.Player.ToggleFire)
 		self.GameHandler_js.add_joydown_handle(2, self.vars.Player.FireBomb)
 		self.GameHandler_js.add_joydown_handle(7, self.show_menu)
-		
+	
 	def start_game(self):
 		self.set_ingame_bindings()
 		running = True

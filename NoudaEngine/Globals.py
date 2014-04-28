@@ -45,22 +45,33 @@ class Vars():
 	class _vars:
 		def __init__(self):
 			self.Bounds = None
-			##self.ScreenSize = (0, 0)
 			self.Paused = False
 			self.gameSprites = pygame.sprite.LayeredUpdates()#Group()
 			self.GameProjectiles = pygame.sprite.Group()
 			self.GameEnemies = pygame.sprite.Group()
 			self.Player = None
 			self.UpperState = GameState.MENU
-			#self.MenuFont = pygame.font.Font("profont.ttf", 25)
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
+
+			self.__CurrentLevel = None
 			
 			## Input handlers
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
 			self.__ScreenSize = (0, 0)
 	
+		@property
+		def CurrentLevel(self):
+			return self.__CurrentLevel
+
+		@CurrentLevel.setter
+		def CurrentLevel(self, var):
+			if isinstance(var, LevelBase):
+				self.__CurrentLevel = var
+			else:
+				raise TypeError("CurrentLevel is an invalid instance!")
+
 		@property
 		def ScreenSize(self):
 			return self.__ScreenSize

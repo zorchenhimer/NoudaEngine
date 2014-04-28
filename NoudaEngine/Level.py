@@ -4,6 +4,7 @@ import pygame
 import GameObjects
 import Globals
 import Pathing
+import EventHandler
 from Menu import *
 
 
@@ -51,6 +52,22 @@ class LevelControl():
 	def draw(self, screen):
 		if self.CurrentLevel is not None:
 			self.CurrentLevel.draw(screen)
+
+class LevelDefault(LevelBase):
+	def __init__(self):
+		self.Player = GameObjects.Player()
+		self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
+	
+	def InitControls(self):
+		self.KeyHandle.clear_all()
+		self.KeyHandle.add_keyhold_handle(pygame.K_SPACE, self.Player.ToggleFire)
+		self.KeyHandle.add_keyhold_handle(pygame.K_LEFT, self.Player.MoveLeft)
+		self.KeyHandle.add_keyhold_handle(pygame.K_RIGHT, self.Player.MoveRight)
+		self.KeyHandle.add_keyhold_handle(pygame.K_up, self.Player.MoveUp)
+		self.KeyHandle.add_keyhold_handle(pygame.K_DOWN, self.Player.MoveDown)
+		self.KeyHandle.add_keydown_handle(pygame.K_b, self.Player.FireBomb)
+		#self.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.
+
 
 ## FIXME: Move this somewhere else once it starts working
 class LevelOne(LevelBase):
