@@ -47,21 +47,33 @@ class Vars():
 			self.Bounds = None
 			##self.ScreenSize = (0, 0)
 			self.Paused = False
-			self.gameSprites = pygame.sprite.LayeredUpdates()#Group()
-			self.GameProjectiles = pygame.sprite.Group()
-			self.GameEnemies = pygame.sprite.Group()
-			self.Player = None
+#			self.gameSprites = pygame.sprite.LayeredUpdates()#Group()
+#			self.GameProjectiles = pygame.sprite.Group()
+#			self.GameEnemies = pygame.sprite.Group()
+#			self.Player = None
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
 			
 			self.__MainMenu = None
 			self.__UpperState = GameState.MENU
+			self.__LevelControl = None
 			
 			## Input handlers
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
 			self.__ScreenSize = (0, 0)
-	
+
+		@property
+		def LevelControl(self):
+			return self.__LevelControl
+
+		@LevelControl.setter
+		def LevelControl(self, var):
+			if self.__LevelControl is not None:
+				raise AttributeError("LevelControl is already assigned!")
+			else:
+				self.__LevelControl = var
+
 		@property
 		def MainMenu(self):
 			return self.__MainMenu

@@ -5,6 +5,7 @@ import GameObjects
 import Globals
 import Pathing
 import EventHandler
+import random
 from Menu import *
 
 
@@ -68,7 +69,12 @@ class LevelControl():
 		vars.CurrentHandler_js = self.JoyHandle
 	
 	def m_exit_to_main(self):
-		pass
+		self.m_resume()
+		vars = Globals.Vars()
+		vars.UpperState = Globals.GameState.MENU
+		vars.CurrentHandler = vars.MainMenu.KeyHandle
+		vars.CurrentHandler_js = vars.MainMenu.JoyHandle
+
 	
 	def m_exit(self):
 		vars = Globals.Vars()
@@ -92,7 +98,7 @@ class LevelControl():
 			if self.CurrentLevel is not None:
 				self.CurrentLevel.draw(screen)
 		elif self.LevelState is LevelState.MENU:
-			self.LevelMenu.draw()
+			self.LevelMenu.draw(screen)
 		elif self.LevelState is LevelState.GAMEOVER:
 			pass
 		else:
@@ -100,10 +106,16 @@ class LevelControl():
 
 class DefaultLevel(LevelBase):
 	def __init__(self):
-		self.Player = GameObjects.Player()
 		self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
 		self.JoyHandle = EventHandler.JoyHandler("Defualt Level Joy Handle")
+
+		## Actual level stuff now
+		self.NextSpawn = 0
+		self.Enemies = pygame.sprite.Group()
+		self.Player = GameObjects.Player()
+		self.Projectiles = pygame.sprite.Group()
 		self.InitControls()
+		self.rand = random.Random()
 
 	def InitControls(self):
 		self.KeyHandle.clear_all()
@@ -122,8 +134,27 @@ class DefaultLevel(LevelBase):
 		self.JoyHandle.add_joyhold_handle(0, self.Player.ToggleFire)
 		self.JoyHandle.add_joydown_handle(2, self.Player.FireBomb)
 	
-	#def ShowMenu(self):
-	#	self.vars.UpperState = Globals.GameState.MENU
+	def update(self):
+		vars = Globals.Vars()
+		if self.NextSpawn <= 0:
+			x = self.rand.randint(vars.Bounds.left, vars.Bounds.right)
+			y = 0
+
+			mirror = False
+			if x % 2 == 0:
+				mirror = True
+
+			e = GameObjects.Enemy()
+			p = Pathing.MovementPath(e)
+			p.load_path(Globals.FixPath('data/CurveDownPath.dat'), (x, y), 2, mirror)
+
+			e.set_path(p)
+			self.Enemies.add(e)
+		else:
+			self.NextSpawn -= 1
+
+	def draw(self, screen):
+		pass
 			
 ## FIXME: Move this somewhere else once it starts working
 class LevelOne(LevelBase):

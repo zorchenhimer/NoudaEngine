@@ -189,6 +189,7 @@ class JoyHandler():
 		Handle joystick events in the event that no joysticks were found.
 	"""
 	def __init__(self, name=None):
+		pygame.joystick.init()
 		if pygame.joystick.get_count() > 0:
 			rh = RealHandler(name)
 			self = rh

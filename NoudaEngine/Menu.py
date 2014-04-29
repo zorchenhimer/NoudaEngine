@@ -100,7 +100,7 @@ class SimpleMenu(MenuBase):
 		#self.FontColor = (255, 255, 255)
 		self.MenuItems = []
 		
-		Debug("ScreenSize: " + str(self.vars.ScreenSize))
+#		Debug("ScreenSize: " + str(self.vars.ScreenSize))
 
 		#self.background = pygame.Surface(self.vars.ScreenSize)
 		#self.Dirty = True

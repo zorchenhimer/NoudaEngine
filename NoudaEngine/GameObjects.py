@@ -29,7 +29,7 @@ class Vehicle(pygame.sprite.Sprite):
 		self.image = Globals.LoadImage(spritePath)
 		self.rect = self.image.get_rect()
 		#self.rect.center = self.vars.Bounds.center
-		self.vars.gameSprites.add(self)
+#		self.vars.gameSprites.add(self)
 		self.firing = False
 		self.nextFire = 0	# Ticks until next fire
 		
