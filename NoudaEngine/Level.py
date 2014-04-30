@@ -5,6 +5,7 @@ import GameObjects
 import Globals
 import Pathing
 import EventHandler
+import Effects
 import random
 from Menu import *
 
@@ -114,6 +115,7 @@ class DefaultLevel(LevelBase):
 		self.Enemies = pygame.sprite.Group()
 		self.Player = GameObjects.Player()
 		self.Projectiles = pygame.sprite.Group()
+		
 		self.InitControls()
 		self.rand = random.Random()
 
@@ -150,11 +152,23 @@ class DefaultLevel(LevelBase):
 
 			e.set_path(p)
 			self.Enemies.add(e)
+			self.NextSpawn = 60
 		else:
 			self.NextSpawn -= 1
+		
+		self.Enemies.update()
+		self.Player.update()
+		self.Projectiles.update()
+		
+		## TODO: projectile collision from non-player vehicles
+		collisions = pygame.sprite.groupcollide(self.Enemies, self.Player.Projectiles, True, False)
+		for sp in collisions:
+			self.Projectiles.add(Effects.Explosion(Globals.UnitType.PLAYER, sp.rect.center))
 
 	def draw(self, screen):
-		pass
+		self.Enemies.draw(screen)
+		self.Player.draw(screen)
+		self.Projectiles.draw(screen)
 			
 ## FIXME: Move this somewhere else once it starts working
 class LevelOne(LevelBase):
@@ -184,8 +198,6 @@ class LevelOne(LevelBase):
 		self.GameOverMenu.set_title("Game Over")
 		self.GameOverMenu.add_item(1, "Return To Main", self.m_return_to_main)
 		self.GameOverMune.add_item(2, "Exit", self.m_exit)
-
-		
 		
 		self.CurrentState = lvlOneStates.GAME
 

@@ -13,7 +13,7 @@ class Bullet(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		
 		self.Type = t
-		self.Speed = 6		# Movementper tick
+		self.Speed = 6		# Movement per tick
 		self.Degrees = d
 		self.Life = l		## Anything higher than -1 will determine how many 
 							## ticks the projectile is alive.
@@ -73,23 +73,18 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect.y += self.StepY
 		
 		vars = Globals.Vars()
-		
-		collisions = pygame.sprite.groupcollide(vars.GameEnemies, vars.GameProjectiles, True, False)
-		for sp in collisions:
-			vars.GameProjectiles.add(Effects.Explosion(self.Type, self.rect.center))
-			self.kill()
 
 class BulletBomb(Bullet):
-	def __init__(self, t, x, y, d=0, l=90):
+	def __init__(self, t, x, y, group, d=0, l=90):
 		Bullet.__init__(self, t, x, y, d, l)
 		self.Fuse = 20
 		self.Speed = 1
+		self.Group = group
 	
 	def detonate(self):
-		vars = Globals.Vars()
 		for n in range(10):
-			vars.GameProjectiles.add(BulletBomb(self.Type, self.rect.centerx, self.rect.centery, (n * 36), self.Life - 20))
-		vars.GameProjectiles.add(Effects.Explosion(self.Type, self.rect.center))
+			self.Group.add(BulletBomb(self.Type, self.rect.centerx, self.rect.centery, self.Group, (n * 36), self.Life - 20))
+		self.Group.add(Effects.Explosion(self.Type, self.rect.center))
 		self.kill()
 	
 	def update(self):

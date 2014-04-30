@@ -72,11 +72,6 @@ class JoyHandler():
 	class RealHandler():
 		def __init__(self, name=None):
 			self.ButtonHandler = KeyHandler(str(name) + " [auto]")
-			"""if pygame.joystick.get_count() <= 0:
-				dj = DummyJoy()
-				self = dj
-				return"""
-			
 			
 			self.hat = []
 			self.axes = []

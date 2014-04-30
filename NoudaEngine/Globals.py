@@ -45,12 +45,7 @@ class Vars():
 	class _vars:
 		def __init__(self):
 			self.Bounds = None
-			##self.ScreenSize = (0, 0)
 			self.Paused = False
-#			self.gameSprites = pygame.sprite.LayeredUpdates()#Group()
-#			self.GameProjectiles = pygame.sprite.Group()
-#			self.GameEnemies = pygame.sprite.Group()
-#			self.Player = None
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
 			
