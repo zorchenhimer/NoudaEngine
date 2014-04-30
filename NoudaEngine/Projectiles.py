@@ -14,7 +14,7 @@ class Bullet(pygame.sprite.Sprite):
 		
 		self.Type = t
 		self.Speed = 6		# Movement per tick
-		self.Degrees = d
+		self.Degrees = d * 1.0
 		self.Life = l		## Anything higher than -1 will determine how many 
 							## ticks the projectile is alive.
 		
@@ -27,7 +27,7 @@ class Bullet(pygame.sprite.Sprite):
 			else:
 				self.Degrees = 90
 		
-		self.Radian = (self.Degrees - 90) * (math.pi / 180)
+		self.Radian = (self.Degrees - 90.0) * (math.pi / 180.0)
 		
 		## Load the correct image.
 		self.image = None
@@ -82,9 +82,10 @@ class BulletBomb(Bullet):
 		self.Group = group
 	
 	def detonate(self):
-		for n in range(10):
-			self.Group.add(BulletBomb(self.Type, self.rect.centerx, self.rect.centery, self.Group, (n * 36), self.Life - 20))
-		self.Group.add(Effects.Explosion(self.Type, self.rect.center))
+		shrapnel = 8
+		for n in range(shrapnel):
+			self.Group.add(BulletBomb(self.Type, self.rect.centerx, self.rect.centery, self.Group, (n * (360.0 / shrapnel)), self.Life - 20))
+		self.Group.add(Effects.Explosion(self.Type, (self.rect.centerx, self.rect.centery)))
 		self.kill()
 	
 	def update(self):

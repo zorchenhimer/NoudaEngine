@@ -131,6 +131,9 @@ class GameEngine():
 					self.vars.Running = False
 					break
 				if event.type == pygame.KEYDOWN:
+					if event.key is pygame.K_F12 or event.key is pygame.K_s:
+						pygame.image.save(self.screen, 'screenshot.png')
+						Info('Screenshot saved.')
 					self.vars.CurrentHandler.do_keydown(event.key)
 				if event.type == pygame.KEYUP:
 					self.vars.CurrentHandler.do_keyup(event.key)

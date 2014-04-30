@@ -16,7 +16,8 @@ class Explosion(pygame.sprite.Sprite):
 		
 		self.SpriteImage = self.image
 		self.rect = self.image.get_rect()
-		self.rect.center = pos
+		self.rect.x = pos[0]
+		self.rect.y = pos[1]
 		
 		if self.Fuse > 0:
 			self.AlphaStep = 255 / self.Fuse
