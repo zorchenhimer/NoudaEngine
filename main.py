@@ -70,14 +70,14 @@ class GameEngine():
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		
-		Menu = NoudaEngine.Menu.SimpleMenu()
-		Menu.set_title('Main Menu')
-		Menu.add_item(1, 'Start Game', self.m_start_game)
-		Menu.add_item(2, 'Exit', self.m_exit_game)
-		self.vars.MainMenu = Menu
+		self.Menu = NoudaEngine.Menu.SimpleMenu()
+		self.Menu.set_title('Main Menu')
+		self.Menu.add_item(1, 'Start Game', self.m_start_game)
+		self.Menu.add_item(2, 'Exit', self.m_exit_game)
+		self.vars.MainMenu = self.Menu
 		
-		self.vars.CurrentHandler = Menu.KeyHandle
-		self.vars.CurrentHandler_js = Menu.JoyHandle
+		self.vars.CurrentHandler = self.Menu.KeyHandle
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle
 		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
 		
 		self.vars.CurrentHandler = self.Menu.KeyHandle
