@@ -4,7 +4,7 @@
 	Handles all logging stuffs.
 """
 
-from Globals import FixPath
+#from Globals import FixPath
 
 __all__ = ["Debug", "Info", "Warn", "LogLevel", "SetLogLevel", "SetPrintLevel"]
 
@@ -21,7 +21,8 @@ class Logger():
 	"""
 	class _InnerClass():
 		def __init__(self, level=None):
-			self.__log_file = FixPath('debug.log')
+			#self.__log_file = FixPath('debug.log')
+			self.__log_file = 'debug.log'
 			self.__log_level = LogLevel.WARN
 			self.__print_level = LogLevel.DEBUG
 		

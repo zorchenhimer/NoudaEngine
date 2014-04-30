@@ -17,6 +17,7 @@ class Vehicle(pygame.sprite.Sprite):
 	def __init__(self, Type=UnitType.ENEMY):
 		self.vars = Globals.Vars()
 		self.type = Type
+		self.Projectiles = pygame.sprite.Group()
 			
 		pygame.sprite.Sprite.__init__(self)
 		
@@ -29,7 +30,7 @@ class Vehicle(pygame.sprite.Sprite):
 		self.image = Globals.LoadImage(spritePath)
 		self.rect = self.image.get_rect()
 		#self.rect.center = self.vars.Bounds.center
-		self.vars.gameSprites.add(self)
+#		self.vars.gameSprites.add(self)
 		self.firing = False
 		self.nextFire = 0	# Ticks until next fire
 		
@@ -68,16 +69,22 @@ class Vehicle(pygame.sprite.Sprite):
 		if self.movingDown == True:
 			self.rect.centery += self.movementSpeed
 		
+		self.Projectiles.update()
+		
 	def FireBullet(self):
 		if self.type == UnitType.ENEMY:
-			self.vars.GameProjectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, None, 40))
-			self.vars.GameProjectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 135, 30))
-			self.vars.GameProjectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 225, 30))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, None, 40))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 135, 30))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 225, 30))
 		else:
-			self.vars.GameProjectiles.add(Bullet(self.type, self.rect.centerx, self.rect.top - 30))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.top - 30))
+		
+	def draw(self, screen):
+		screen.blit(self.image, self.rect)
+		self.Projectiles.draw(screen)
 	
 	def FireBomb(self):
-		self.vars.GameProjectiles.add(BulletBomb(self.type, self.rect.centerx, self.rect.top - 30))
+		self.Projectiles.add(BulletBomb(self.type, self.rect.centerx, self.rect.top - 30, self.Projectiles))
 		
 	def MoveLeft(self, on=False):
 		self.movingLeft = on
@@ -127,12 +134,6 @@ class Player(Vehicle):
 			self.movingDown = False
 		
 		Vehicle.update(self)
-	
-	## The player's sprite is not in a sprite group, so we have to define this
-	## here.
-	## FIXME: Put the player in a sprite group, or add draw() to Vehicle()
-	def draw(self, screen):
-		screen.blit(self.image, self.rect)
 	
 class Enemy(Vehicle):
 	def __init__(self):

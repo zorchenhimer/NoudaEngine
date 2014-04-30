@@ -36,20 +36,6 @@ class GameEngine():
 		pygame.init()
 		pygame.joystick.init()
 		
-		self.GameHandler = NoudaEngine.EventHandler.KeyHandler("Main Game Handler")
-		self.MenuHandler = NoudaEngine.EventHandler.KeyHandler("Main Menu Handler")
-		
-		if pygame.joystick.get_count() > 0:
-			js = pygame.joystick.Joystick(0)
-			js.init()
-			self.GameHandler_js = NoudaEngine.EventHandler.JoyHandler(js, "Game Handler with " + js.get_name())
-			self.MenuHandler_js = NoudaEngine.EventHandler.JoyHandler(js, "Menu Handler with " + js.get_name())
-			self.vars.CurrentHandler_js = self.MenuHandler_js
-		else:
-			self.GameHandler_js = NoudaEngine.EventHandler.DummyJoy(None, "No Joy Found")
-			self.MenuHandler_js = self.GameHandler_js
-			self.vars.CurrentHandler_js = self.MenuHandler_js
-			
 		self.tps = cap
 		Debug("Ticks per second cap: " + str(self.tps))
 		self.clock = pygame.time.Clock()		## Might want to move this to Globals.Vars() for physics or frame-independent timing
@@ -84,19 +70,21 @@ class GameEngine():
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		
-		self.vars.Player = NoudaEngine.GameObjects.Player()
+		Menu = NoudaEngine.Menu.SimpleMenu()
+		Menu.set_title('Main Menu')
+		Menu.add_item(1, 'Start Game', self.m_start_game)
+		Menu.add_item(2, 'Exit', self.m_exit_game)
+		self.vars.MainMenu = Menu
 		
-		self.Menu = NoudaEngine.Menu.SimpleMenu()
-		self.Menu.set_title('Main Menu')
-		self.Menu.add_item(1, 'Start Game', self.m_start_game)
-		self.Menu.add_item(2, 'Exit', self.m_exit_game)
+		self.vars.CurrentHandler = Menu.KeyHandle
+		self.vars.CurrentHandler_js = Menu.JoyHandle
+		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
 		
 		self.vars.CurrentHandler = self.Menu.KeyHandle
 		self.vars.CurrentHandler_js = self.Menu.JoyHandle
 		
 		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
 
-		#pygame.mouse.set_visible(False)
 		self.vars.CurrentHandler_js = self.Menu.JoyHandle
 		
 		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
@@ -106,8 +94,8 @@ class GameEngine():
 	def m_start_game(self):
 		Info("'Start Game' menu item selected.  Starting game.")
 		self.vars.UpperState = NoudaEngine.Globals.GameState.GAME
-		self.vars.CurrentHandler = self.GameHandler
-		self.vars.CurrentHandler_js = self.GameHandler_js
+		self.vars.CurrentHandler = self.vars.LevelControl.KeyHandle
+		self.vars.CurrentHandler_js = self.vars.LevelControl.JoyHandle
 	
 	def m_exit_game(self):
 		Info("'Exit Game' menu item selected.  Exiting.")
@@ -115,39 +103,20 @@ class GameEngine():
 		
 	def show_menu(self):
 		self.vars.UpperState = NoudaEngine.Globals.GameState.MENU
-		self.vars.Player.StopFire()
-		self.vars.CurrentHandler = self.Menu.KeyHandle
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle
+		self.vars.LevelControl.CurrentLevel.Player.StopFire()
+		self.vars.CurrentHandler = self.vars.MainMenu.KeyHandle
+		self.vars.CurrentHandler_js = self.vars.MainMenu.JoyHandle
 		
-		self.Menu.Dirty = True
-		self.Menu.update()
+		self.vars.MainMenu.Dirty = True
+		self.vars.MainMenu.update()
 		
 		## Set this here so we don't have to re-draw all of the sprites each
 		## tick wen the menu is active.
-		self.Menu.set_background(self.screen.copy())
+		self.vars.MainMenu.set_background(self.screen.copy())
 	
 	def set_ingame_bindings(self):
-		## TODO: move this stuff to the level and menu code, respectively.
+		pass
 		
-		## Normal game state
-		self.GameHandler.clear_all()
-		self.GameHandler.add_keyhold_handle(pygame.K_SPACE, self.vars.Player.ToggleFire)
-		self.GameHandler.add_keyhold_handle(pygame.K_LEFT, self.vars.Player.MoveLeft)
-		self.GameHandler.add_keyhold_handle(pygame.K_RIGHT, self.vars.Player.MoveRight)
-		self.GameHandler.add_keyhold_handle(pygame.K_UP, self.vars.Player.MoveUp)
-		self.GameHandler.add_keyhold_handle(pygame.K_DOWN, self.vars.Player.MoveDown)
-		self.GameHandler.add_keydown_handle(pygame.K_b, self.vars.Player.FireBomb)
-		self.GameHandler.add_keydown_handle(pygame.K_ESCAPE, self.show_menu)
-		
-		self.GameHandler_js.clear_all()
-		self.GameHandler_js.add_joyhold_handle('hatposx', self.vars.Player.MoveRight)
-		self.GameHandler_js.add_joyhold_handle('hatnegx', self.vars.Player.MoveLeft)
-		self.GameHandler_js.add_joyhold_handle('hatposy', self.vars.Player.MoveUp)
-		self.GameHandler_js.add_joyhold_handle('hatnegy', self.vars.Player.MoveDown)
-		self.GameHandler_js.add_joyhold_handle(0, self.vars.Player.ToggleFire)
-		self.GameHandler_js.add_joydown_handle(2, self.vars.Player.FireBomb)
-		self.GameHandler_js.add_joydown_handle(7, self.show_menu)
-	
 	def start_game(self):
 		self.set_ingame_bindings()
 		running = True
@@ -177,10 +146,11 @@ class GameEngine():
 			
 			if self.vars.UpperState == NoudaEngine.Globals.GameState.GAME or firstloop:
 				## Update the sprite groups.
-				self.vars.GameEnemies.update()
-				self.vars.GameProjectiles.update()
-				self.vars.Player.update()
-				if nextspawn <= 0:
+				self.vars.LevelControl.update()
+				#self.vars.GameEnemies.update()
+				#self.vars.GameProjectiles.update()
+				#self.vars.Player.update()
+				"""if nextspawn <= 0:
 					x = rand.randint(self.vars.Bounds.left, self.vars.Bounds.right)
 					y = 0
 					#Debug("offset: (" + str(x) + ', ' + str(y) + ')')
@@ -197,7 +167,7 @@ class GameEngine():
 					self.vars.GameEnemies.add(e)
 					nextspawn = 60
 				else:
-					nextspawn -= 1
+					nextspawn -= 1"""
 			
 			## Draw stuff
 			if self.vars.UpperState == NoudaEngine.Globals.GameState.MENU:
@@ -207,17 +177,18 @@ class GameEngine():
 					## display it as the background without redrawing everything
 					## every frame.
 					self.screen.blit(self.sizedBackground, (0, 0))
-					self.vars.Player.draw(self.screen)
+					#self.vars.Player.draw(self.screen)
 					self.show_menu()
 					firstloop = False
-				self.Menu.draw(self.screen)
+				self.vars.MainMenu.draw(self.screen)
 				
 			elif self.vars.UpperState == NoudaEngine.Globals.GameState.GAME:
 				## Draw the game field sprites.
 				self.screen.blit(self.sizedBackground, (0,0))
-				self.vars.Player.draw(self.screen)
-				self.vars.GameEnemies.draw(self.screen)
-				self.vars.GameProjectiles.draw(self.screen)
+				#self.vars.Player.draw(self.screen)
+				#self.vars.GameEnemies.draw(self.screen)
+				#self.vars.GameProjectiles.draw(self.screen)
+				self.vars.LevelControl.draw(self.screen)
 
 			self.hud.set_text(NoudaEngine.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))
 			

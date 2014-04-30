@@ -46,20 +46,53 @@ class Vars():
 		def __init__(self):
 			self.Bounds = None
 			self.Paused = False
-			self.gameSprites = pygame.sprite.LayeredUpdates()#Group()
-			self.GameProjectiles = pygame.sprite.Group()
-			self.GameEnemies = pygame.sprite.Group()
-			self.Player = None
-			self.UpperState = GameState.MENU
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
 
-			self.__CurrentLevel = None
+			self.__MainMenu = None
+			self.__UpperState = GameState.MENU
+			self.__LevelControl = None
 			
 			## Input handlers
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
 			self.__ScreenSize = (0, 0)
+
+		@property
+		def LevelControl(self):
+			return self.__LevelControl
+
+		@LevelControl.setter
+		def LevelControl(self, var):
+			if self.__LevelControl is not None:
+				raise AttributeError("LevelControl is already assigned!")
+			else:
+				self.__LevelControl = var
+
+		@property
+		def MainMenu(self):
+			return self.__MainMenu
+		
+		@MainMenu.setter
+		def MainMenu(self, var):
+			if isinstance(var, Menu.MenuBase):
+				self.__MainMenu = var
+			else:
+				raise TypeError("MainMenu is an invalid type!")
+	
+		@property
+		def UpperState(self):
+			return self.__UpperState
+		
+		@UpperState.setter
+		def UpperState(self, var):
+			if type(var) is not int:
+				raise TypeError("Invalid type for UpperState!")
+			else:
+				if var > 0 and var < 4:
+					self.__UpperState = var
+				else:
+					raise IndexError("UpperState value out of range!")
 	
 		@property
 		def CurrentLevel(self):

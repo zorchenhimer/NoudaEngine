@@ -38,7 +38,7 @@ class MenuBase():
 	
 	def _init_controls(self):
 		self.KeyHandle = EventHandler.KeyHandler("Menu Key Handler")
-		self.JoyHandle = EventHandler.DummyJoy("Menu Joy Handler")
+		self.JoyHandle = EventHandler.JoyHandler("Menu Joy Handler")
 
 		## FIXME: Move this to some central place so we only do it once.  Maybe store the object in Globals?
 		if pygame.joystick.get_count() > 0:
@@ -100,7 +100,7 @@ class SimpleMenu(MenuBase):
 		#self.FontColor = (255, 255, 255)
 		self.MenuItems = []
 		
-		Debug("ScreenSize: " + str(self.vars.ScreenSize))
+#		Debug("ScreenSize: " + str(self.vars.ScreenSize))
 
 		#self.background = pygame.Surface(self.vars.ScreenSize)
 		#self.Dirty = True

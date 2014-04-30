@@ -5,6 +5,7 @@
 
 from Logger import *
 import copy
+import pygame
 
 class KeyHandler():
 	def __init__(self, name=None):
@@ -68,123 +69,133 @@ class KeyHandler():
 ## TODO: dead zone calibration.
 ## TODO: Joystick factory of sorts.  Do the joystick detection here.
 class JoyHandler():
-	def __init__(self, joystick_obj, name=None):
-		self.ButtonHandler = KeyHandler(name + " [auto]")
-		self.hat = []
-		self.axes = []
-		self.joystick = joystick_obj
-		self.Name = name
-		strname = ""
+	class RealHandler():
+		def __init__(self, name=None):
+			self.ButtonHandler = KeyHandler(str(name) + " [auto]")
+			
+			self.hat = []
+			self.axes = []
+			self.joystick = pygame.joystick.Joystick(0) ## We only care about the first joystick, for now.
+			self.joysitck.init()
+			self.Name = name
+			strname = ""
+			
+			## FIXME: Are these actually used?
+			"""self.Hat = {}
+			self.Hat['up'] = False
+			self.Hat['down'] = False
+			self.Hat['left'] = False
+			self.Hat['right'] = False"""
+			
+			if name is not None:
+				strname = " with name " + str(name)
+			Debug("Initializing a new JoyHandler()" + strname)
 		
-		## FIXME: Are these actually used?
-		"""self.Hat = {}
-		self.Hat['up'] = False
-		self.Hat['down'] = False
-		self.Hat['left'] = False
-		self.Hat['right'] = False"""
-		
-		if name is not None:
-			strname = " with name " + str(name)
-		Debug("Initializing a new JoyHandler()" + strname)
-	
-	## TODO: store states of hats -- wait, why?
-	def update(self):
-		## I can't find a controller with more than one hat that isn't the
-		## Virtual Boy controller.  We don't care about any more than one in
-		## that case.
-		if self.joystick.get_numhats() > 0:
-			hat = self.joystick.get_hat(0)
-			self.hat = hat
-		
-		if len(self.hat) == 0:
-			return
+		## TODO: store states of hats -- wait, why?
+		def update(self):
+			## I can't find a controller with more than one hat that isn't the
+			## Virtual Boy controller.  We don't care about any more than one in
+			## that case.
+			if self.joystick.get_numhats() > 0:
+				hat = self.joystick.get_hat(0)
+				self.hat = hat
+			
+			if len(self.hat) == 0:
+				return
 
 
-		## Handle the hat directions as buttons.
-		for h in (0, 1):			
-			if self.hat[0] > 0:
-				#self.Hat['right'] = True
-				self.ButtonHandler.do_keydown('hatposx')
-			else:
-				#self.Hat['right'] = False
-				self.ButtonHandler.do_keyup('hatposx')
+			## Handle the hat directions as buttons.
+			for h in (0, 1):			
+				if self.hat[0] > 0:
+					#self.Hat['right'] = True
+					self.ButtonHandler.do_keydown('hatposx')
+				else:
+					#self.Hat['right'] = False
+					self.ButtonHandler.do_keyup('hatposx')
+				
+				if self.hat[0] < 0:
+					#self.Hat['left'] = True
+					self.ButtonHandler.do_keydown('hatnegx')
+				else:
+					#self.Hat['left'] = False
+					self.ButtonHandler.do_keyup('hatnegx')
+				
+				if self.hat[1] > 0:
+					#self.Hat['up'] = True
+					self.ButtonHandler.do_keydown('hatposy')
+				else:
+					#self.Hat['up'] = False
+					self.ButtonHandler.do_keyup('hatposy')
+				
+				if self.hat[1] < 0:
+					#self.Hat['down'] = True
+					self.ButtonHandler.do_keydown('hatnegy')
+				else:
+					#self.Hat['down'] = False
+					self.ButtonHandler.do_keyup('hatnegy')
 			
-			if self.hat[0] < 0:
-				#self.Hat['left'] = True
-				self.ButtonHandler.do_keydown('hatnegx')
-			else:
-				#self.Hat['left'] = False
-				self.ButtonHandler.do_keyup('hatnegx')
+			## Axes on the other hand...
+			for i in range(len(self.axes)):
+				axis = self.joystick.get_axis(i)
+				self.axes[i] = axis
 			
-			if self.hat[1] > 0:
-				#self.Hat['up'] = True
-				self.ButtonHandler.do_keydown('hatposy')
-			else:
-				#self.Hat['up'] = False
-				self.ButtonHandler.do_keyup('hatposy')
-			
-			if self.hat[1] < 0:
-				#self.Hat['down'] = True
-				self.ButtonHandler.do_keydown('hatnegy')
-			else:
-				#self.Hat['down'] = False
-				self.ButtonHandler.do_keyup('hatnegy')
+		def get_hat_value(self, hat):
+			return self.hat
 		
-		## Axes on the other hand...
-		for i in range(len(self.axes)):
-			axis = self.joystick.get_axis(i)
-			self.axes[i] = axis
+		## FIXME: make this better with error checking/catching.
+		def get_axis_value(self, axis):
+			if len(self.axes) == 0 or len(self.axis) - 1 < axis or axis < 0:
+				return 0
+			return self.axes[axis]
 		
-	def get_hat_value(self, hat):
-		return self.hat
-	
-	## FIXME: make this better with error checking/catching.
-	def get_axis_value(self, axis):
-		if len(self.axes) == 0 or len(self.axis) - 1 < axis or axis < 0:
-			return 0
-		return self.axes[axis]
-	
-	## Because why write shit twice?
-	def dump_bindings(self):
-		self.ButtonHandler.dump_bindings()
-	
-	def do_joydown(self, button, joy=0):
-		if joy == self.joystick.get_id():
-			Debug("Joydown for " + str(button))
-			self.ButtonHandler.do_keydown(button)
-	
-	def do_joyup(self, button, joy=0):
-		if joy == self.joystick.get_id():
-			self.ButtonHandler.do_keyup(button)
-	
-	def add_joydown_handle(self, button, callback, args=None, joy=0):
-		if joy == self.joystick.get_id():
-			self.ButtonHandler.add_keydown_handle(button, callback, args)
-	
-	def add_joyup_handle(self, button, callback, args=None, joy=0):
-		if joy == self.joystick.get_id():
-			self.ButtonHandler.add_keyup_handle(button, callback, args)
-	
-	def add_joyhold_handle(self, button, callback, joy=0):
-		if joy == self.joystick.get_id():
-			self.ButtonHandler.add_keyhold_handle(button, callback)
-	
-	def clear_all(self):
-		self.ButtonHandler.clear_all()
-	
-	def copy(self):
-		return copy.copy(self)
+		## Because why write shit twice?
+		def dump_bindings(self):
+			self.ButtonHandler.dump_bindings()
+		
+		def do_joydown(self, button, joy=0):
+			if joy == self.joystick.get_id():
+				Debug("Joydown for " + str(button))
+				self.ButtonHandler.do_keydown(button)
+		
+		def do_joyup(self, button, joy=0):
+			if joy == self.joystick.get_id():
+				self.ButtonHandler.do_keyup(button)
+		
+		def add_joydown_handle(self, button, callback, args=None, joy=0):
+			if joy == self.joystick.get_id():
+				self.ButtonHandler.add_keydown_handle(button, callback, args)
+		
+		def add_joyup_handle(self, button, callback, args=None, joy=0):
+			if joy == self.joystick.get_id():
+				self.ButtonHandler.add_keyup_handle(button, callback, args)
+		
+		def add_joyhold_handle(self, button, callback, joy=0):
+			if joy == self.joystick.get_id():
+				self.ButtonHandler.add_keyhold_handle(button, callback)
+		
+		def clear_all(self):
+			self.ButtonHandler.clear_all()
+		
+		def copy(self):
+			return copy.copy(self)
 
-class DummyJoy():
+#class DummyJoy():
 	"""
 		Handle joystick events in the event that no joysticks were found.
 	"""
-	def __init__(self, joystick_obj=None, name=None):
-		if name is not None:
-			self.Name = name + " [DUMMY]"
+	def __init__(self, name=None):
+		pygame.joystick.init()
+		if pygame.joystick.get_count() > 0:
+			rh = RealHandler(name)
+			self = rh
+			Debug("Found a joystick; using it.")
 		else:
-			self.Name = "[DUMMY]"
-		Debug("Init()'ing a new DummyJoy() object: " + self.Name)
+			if name is not None:
+				self.Name = name + " [DUMMY]"
+			else:
+				self.Name = "[DUMMY]"
+			Debug("Init()'ing a new DummyJoy() object: " + self.Name)
+			self.ButtonHandler = KeyHandler(str(self.Name) + " [auto]")
 
 	def update(*arg):
 		pass
