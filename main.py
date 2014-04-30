@@ -97,6 +97,10 @@ class GameEngine():
 		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
 
 		#pygame.mouse.set_visible(False)
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle
+		
+		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
+
 		Info("Init finished.")
 	
 	def m_start_game(self):
