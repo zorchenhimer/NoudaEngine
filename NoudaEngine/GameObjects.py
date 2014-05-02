@@ -5,13 +5,10 @@
 import math
 import pygame
 import Globals
-import HeadsUpDisplay
 from Globals import GTFO, UnitType
 from Pathing import MovementPath
 from Projectiles import Bullet, BulletBomb
-#import random
-
-#RAND = random.Random()
+from Logger import *
 
 class Vehicle(pygame.sprite.Sprite):
 	def __init__(self, Type=UnitType.ENEMY):
@@ -88,15 +85,23 @@ class Vehicle(pygame.sprite.Sprite):
 		
 	def MoveLeft(self, on=False):
 		self.movingLeft = on
+		if on:
+			Debug("> Left")
 	
 	def MoveRight(self, on=False):
 		self.movingRight = on
+		if on:
+			Debug("> Right")
 	
 	def MoveUp(self, on=False):
 		self.movingUp = on
+		if on:
+			Debug("> Up")
 	
 	def MoveDown(self, on=False):
 		self.movingDown = on
+		if on:
+			Debug("> Down")
 
 	def tostring(self):
 		typetext = 'Unknown'

@@ -5,7 +5,6 @@
 import pygame
 import math
 import Globals
-#import HeadsUpDisplay
 import EventHandler
 from Logger import *
 
@@ -41,10 +40,10 @@ class MenuBase():
 		self.JoyHandle = EventHandler.JoyHandler("Menu Joy Handler")
 
 		## FIXME: Move this to some central place so we only do it once.  Maybe store the object in Globals?
-		if pygame.joystick.get_count() > 0:
+		"""if pygame.joystick.get_count() > 0:
 			js = pygame.joystick.Joystick(0)
 			js.init()
-			self.JoyHandle = EventHandler.JoyHandler(js, "Menu Joy Handler with " + js.get_name())
+			self.JoyHandle = EventHandler.JoyHandler(js, "Menu Joy Handler with " + js.get_name())"""
 
 		# Shouldn't neet to clear_all(), but w/e
 		self.KeyHandle.clear_all()

@@ -6,6 +6,7 @@
 from Logger import *
 import copy
 import pygame
+import random
 
 class KeyHandler():
 	def __init__(self, name=None):
@@ -13,9 +14,13 @@ class KeyHandler():
 		self.keyup_assignments = {}
 		self.Name = name
 		strname = ""
+		
+		rand = random.Random()
+		self.randID = rand.randint(0, 100000)
+		
 		if name is not None:
-			strname = " with name " + str(name)
-		Debug("Initializing a new KeyHandler()" + strname)
+			strname = " with name " + str(name)		
+		Debug("Initializing a new KeyHandler()" + strname + " [" + str(self.randID) + "]")
 	
 	def dump_bindings(self):
 		print "Keydown assignments"
@@ -43,10 +48,13 @@ class KeyHandler():
 	def do_keydown(self, key):
 		""" Execute a key down event's callback. """
 		if key in self.keydown_assignments:
+			Debug("Keydown for " + str(key))
 			if self.keydown_assignments[key]['args'] != None:
 				self.keydown_assignments[key]['callback'](self.keydown_assignments[key]['args'])
 			else:
 				self.keydown_assignments[key]['callback']()
+		else:
+			Debug("[" + self.Name +"] Unbound keydown: " + str(key))
 	
 	def do_keyup(self, key):
 		""" Execute a key up event's callback. """
@@ -55,6 +63,8 @@ class KeyHandler():
 				self.keyup_assignments[key]['callback'](self.keyup_assignments[key]['args'])
 			else:
 				self.keyup_assignments[key]['callback']()
+		else:
+			Debug("[" + self.Name +"] Unbound keyup: " + str(key))
 	
 	def clear_all(self):
 		""" Reset all events. """
@@ -70,69 +80,79 @@ class KeyHandler():
 ## TODO: Joystick factory of sorts.  Do the joystick detection here.
 class JoyHandler():
 	class RealHandler():
-		def __init__(self, name=None):
+		class MrHat():
+			def __init__(self, handler):
+				self.__PosX = False
+				self.__PosY = False
+				self.__NegX = False
+				self.__NegY = False
+				self.__Handler = handler
+			
+			def update(self, hat):
+				## Left/Right Keyup
+				if hat[0] == 0:
+					## Right
+					if self.__PosX is not False:
+						self.__PosX = False
+						self.__Handler.do_keyup('hatposx')
+					## Left
+					elif self.__NegX is not False:
+						self.__NegX = False
+						self.__Handler.do_keyup('hatnegx')
+				
+				## Right Keydown
+				elif hat[0] == 1 and self.__PosX is not True:
+					self.__PosX = True
+					self.__Handler.do_keydown('hatposx')
+				
+				## Left Keydown
+				elif hat[0] == -1 and self.__NegX is not True:
+					self.__NegX = True
+					self.__Handler.do_keydown('hatnegx')
+				
+				## Up/Down Keyup
+				if hat[1] == 0:
+					## Up
+					if self.__PosY is not False:
+						self.__PosY = False
+						self.__Handler.do_keyup('hatposy')
+					## Down
+					elif self.__NegY is not False:
+						self.__NegY = False
+						self.__Handler.do_keyup('hatnegy')
+				
+				## Up Keydown
+				elif hat[1] == 1 and self.__PosY is not True:
+					self.__PosY = True
+					self.__Handler.do_keydown('hatposy')
+				
+				## Down Keydown
+				elif hat[1] == -1 and self.__NegY is not True:
+					self.__NegY = True
+					self.__Handler.do_keydown('hatnegy')
+				
+		def __init__(self, rID, name=None):
 			self.ButtonHandler = KeyHandler(str(name) + " [auto]")
 			
-			self.hat = []
+			self.hat = JoyHandler.RealHandler.MrHat(self.ButtonHandler)
+			self.lastHat = []
 			self.axes = []
 			self.joystick = pygame.joystick.Joystick(0) ## We only care about the first joystick, for now.
-			self.joysitck.init()
+			self.joystick.init()
 			self.Name = name
 			strname = ""
-			
-			## FIXME: Are these actually used?
-			"""self.Hat = {}
-			self.Hat['up'] = False
-			self.Hat['down'] = False
-			self.Hat['left'] = False
-			self.Hat['right'] = False"""
+			self.randID = rID
 			
 			if name is not None:
 				strname = " with name " + str(name)
-			Debug("Initializing a new JoyHandler()" + strname)
+			Debug("Initializing a new JoyHandler()" + strname + " [" + str(self.randID) + "]")
 		
-		## TODO: store states of hats -- wait, why?
 		def update(self):
 			## I can't find a controller with more than one hat that isn't the
 			## Virtual Boy controller.  We don't care about any more than one in
 			## that case.
 			if self.joystick.get_numhats() > 0:
-				hat = self.joystick.get_hat(0)
-				self.hat = hat
-			
-			if len(self.hat) == 0:
-				return
-
-
-			## Handle the hat directions as buttons.
-			for h in (0, 1):			
-				if self.hat[0] > 0:
-					#self.Hat['right'] = True
-					self.ButtonHandler.do_keydown('hatposx')
-				else:
-					#self.Hat['right'] = False
-					self.ButtonHandler.do_keyup('hatposx')
-				
-				if self.hat[0] < 0:
-					#self.Hat['left'] = True
-					self.ButtonHandler.do_keydown('hatnegx')
-				else:
-					#self.Hat['left'] = False
-					self.ButtonHandler.do_keyup('hatnegx')
-				
-				if self.hat[1] > 0:
-					#self.Hat['up'] = True
-					self.ButtonHandler.do_keydown('hatposy')
-				else:
-					#self.Hat['up'] = False
-					self.ButtonHandler.do_keyup('hatposy')
-				
-				if self.hat[1] < 0:
-					#self.Hat['down'] = True
-					self.ButtonHandler.do_keydown('hatnegy')
-				else:
-					#self.Hat['down'] = False
-					self.ButtonHandler.do_keyup('hatnegy')
+				self.hat.update(self.joystick.get_hat(0))
 			
 			## Axes on the other hand...
 			for i in range(len(self.axes)):
@@ -154,7 +174,6 @@ class JoyHandler():
 		
 		def do_joydown(self, button, joy=0):
 			if joy == self.joystick.get_id():
-				Debug("Joydown for " + str(button))
 				self.ButtonHandler.do_keydown(button)
 		
 		def do_joyup(self, button, joy=0):
@@ -163,10 +182,12 @@ class JoyHandler():
 		
 		def add_joydown_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
+				Debug("[" + self.Name + "] Adding joydown for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keydown_handle(button, callback, args)
 		
 		def add_joyup_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
+				Debug("[" + self.Name + "] Adding joyup for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keyup_handle(button, callback, args)
 		
 		def add_joyhold_handle(self, button, callback, joy=0):
@@ -178,16 +199,19 @@ class JoyHandler():
 		
 		def copy(self):
 			return copy.copy(self)
-
-#class DummyJoy():
+	
 	"""
-		Handle joystick events in the event that no joysticks were found.
+		Wrapper below.  If we find a joystick, use JoyHandler.RealHandler().
+		Otherwise quietly ignore all joystick actions.
 	"""
 	def __init__(self, name=None):
 		pygame.joystick.init()
+		self.real_handle = None
+		rand = random.Random()
+		self.randID = rand.randint(0, 100000)
+		
 		if pygame.joystick.get_count() > 0:
-			rh = RealHandler(name)
-			self = rh
+			self.real_handle = JoyHandler.RealHandler(self.randID, name)
 			Debug("Found a joystick; using it.")
 		else:
 			if name is not None:
@@ -197,36 +221,52 @@ class JoyHandler():
 			Debug("Init()'ing a new DummyJoy() object: " + self.Name)
 			self.ButtonHandler = KeyHandler(str(self.Name) + " [auto]")
 
-	def update(*arg):
+	def update(self):
+		if self.real_handle is not None:
+			return self.real_handle.update()
 		pass
 	
-	def get_hat_value(*arg):
+	def get_hat_value(self, hat):
+		if self.real_handle is not None:
+			return self.real_handle.get_hat_value(hat)
 		return (0, 0)
 	
-	def get_axis_value(*arg):
+	def get_axis_value(self, axis):
+		if self.real_handle is not None:
+			return self.real_handle.get_axis_value(axis)
 		return 0
 	
 	def dump_bindings(self):
-		Debug("Attempting to dump_bindings() on a DummyJoy() object '" + self.Name + "'; ignoring.")
+		if self.real_handle is not None:
+			return self.real_handle.dump_bindings()
+		else:
+			Debug("Attempting to dump_bindings() on a DummyJoy() object '" + self.Name + "'; ignoring.")
 	
-	def do_joydown(*arg):
-		pass
+	def do_joydown(self, button, joy=0):
+		if self.real_handle is not None:
+			self.real_handle.do_joydown(button, joy)
 	
-	def do_joyup(*arg):
-		pass
+	def do_joyup(self, button, joy=0):
+		if self.real_handle is not None:
+			self.real_handle.do_joyup(button, joy)
 	
-	def add_joydown_handle(*arg):
-		pass
+	def add_joydown_handle(self, button, callback, args=None, joy=0):
+		if self.real_handle is not None:
+			self.real_handle.add_joydown_handle(button, callback, args,)
 	
-	def add_joyup_handle(*arg):
-		pass
+	def add_joyup_handle(self, button, callback, args=None, joy=0):
+		if self.real_handle is not None:
+			self.real_handle.add_joyup_handle(button, callback, args, joy)
 
-	def add_joyhold_handle(*args):
-		pass
+	def add_joyhold_handle(self, button, callback, joy=0):
+		if self.real_handle is not None:
+			self.real_handle.add_joyhold_handle(button, callback, joy)
 	
-	def clear_all(*args):
-		pass
+	def clear_all(self):
+		if self.real_handle is not None:
+			self.real_handle.clear_all()
 
-	## Don't bother copying anything.  This might bite me in the ass later...
 	def copy(self):
+		if self.real_handle is not None:
+			return copy.copy(self)
 		return self

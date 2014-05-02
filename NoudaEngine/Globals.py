@@ -5,8 +5,7 @@
 import pygame
 import platform
 import os.path as path
-#import NoudaEngine.Logger.Debug as Debug
-#from Logger import Debug, Warn, Info
+from Logger import Debug, Warn, Info
 
 class UnitType():
 	PLAYER = 1
@@ -57,6 +56,8 @@ class Vars():
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
 			self.__ScreenSize = (0, 0)
+			
+			Info("Global.Vars() has been initialized.")
 
 		@property
 		def LevelControl(self):
@@ -158,6 +159,7 @@ class Vars():
 		return getattr(self.__instance, attr)
 	
 	def __setattr__(self, attr, value):
+		#Debug("Setting global variable " + str(attr) + " with value " + str(value))
 		return setattr(self.__instance, attr, value)
 		
 #import inspect

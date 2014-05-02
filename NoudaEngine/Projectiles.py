@@ -14,18 +14,21 @@ class Bullet(pygame.sprite.Sprite):
 		
 		self.Type = t
 		self.Speed = 6		# Movement per tick
-		self.Degrees = d * 1.0
+		self.Degrees = d
 		self.Life = l		## Anything higher than -1 will determine how many 
 							## ticks the projectile is alive.
 		
 		## Defaults given the unit type that fired the projectile.
 		if self.Degrees == None:
 			if self.Type == UnitType.PLAYER:
-				self.Degrees = 0
+				self.Degrees = 0.0
 			elif self.Type == UnitType.ENEMY:
-				self.Degrees = 180
+				self.Degrees = 180.0
 			else:
-				self.Degrees = 90
+				self.Degrees = 90.0
+		else:
+			## Make sure it's a float.  Because *reasons*.
+			self.Degrees *= 1.0
 		
 		self.Radian = (self.Degrees - 90.0) * (math.pi / 180.0)
 		

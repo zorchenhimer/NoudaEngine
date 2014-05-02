@@ -148,29 +148,7 @@ class GameEngine():
 				continue
 			
 			if self.vars.UpperState == NoudaEngine.Globals.GameState.GAME or firstloop:
-				## Update the sprite groups.
 				self.vars.LevelControl.update()
-				#self.vars.GameEnemies.update()
-				#self.vars.GameProjectiles.update()
-				#self.vars.Player.update()
-				"""if nextspawn <= 0:
-					x = rand.randint(self.vars.Bounds.left, self.vars.Bounds.right)
-					y = 0
-					#Debug("offset: (" + str(x) + ', ' + str(y) + ')')
-					
-					mirror = False
-					if(x % 2 == 0):
-						mirror = True
-						
-					e = NoudaEngine.GameObjects.Enemy()
-					p = NoudaEngine.Pathing.MovementPath(e)
-					p.load_path(FixPath('data/CurveDownPath.dat'), (rand.randint(self.vars.Bounds.left, self.vars.Bounds.right), 0), 2, mirror)
-					
-					e.set_path(p)
-					self.vars.GameEnemies.add(e)
-					nextspawn = 60
-				else:
-					nextspawn -= 1"""
 			
 			## Draw stuff
 			if self.vars.UpperState == NoudaEngine.Globals.GameState.MENU:
@@ -180,17 +158,14 @@ class GameEngine():
 					## display it as the background without redrawing everything
 					## every frame.
 					self.screen.blit(self.sizedBackground, (0, 0))
-					#self.vars.Player.draw(self.screen)
 					self.show_menu()
 					firstloop = False
 				self.vars.MainMenu.draw(self.screen)
 				
 			elif self.vars.UpperState == NoudaEngine.Globals.GameState.GAME:
-				## Draw the game field sprites.
+				## Draw the level.
+				## TODO: Move the background into the level code.
 				self.screen.blit(self.sizedBackground, (0,0))
-				#self.vars.Player.draw(self.screen)
-				#self.vars.GameEnemies.draw(self.screen)
-				#self.vars.GameProjectiles.draw(self.screen)
 				self.vars.LevelControl.draw(self.screen)
 
 			self.hud.set_text(NoudaEngine.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))

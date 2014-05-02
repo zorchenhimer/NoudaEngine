@@ -8,6 +8,7 @@ import EventHandler
 import Effects
 import random
 from Menu import *
+from Logger import *
 
 
 class LevelState():
@@ -39,7 +40,7 @@ class LevelControl():
 		self.LevelState = LevelState.GAME
 		
 		lvlone = DefaultLevel()
-		self.load_level(lvlone)
+		self.preload_level(lvlone)
 		
 		self.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_menu)
 		
@@ -53,9 +54,9 @@ class LevelControl():
 		self.GameOverMenu.add_item(1, 'Return to main menu', self.m_exit_to_main)
 		self.GameOverMenu.add_item(2, 'Exit', self.m_exit)
 		
-		vars = Globals.Vars()
-		vars.CurrentHandler = self.KeyHandle
-		vars.CurrentHandler_js = self.JoyHandle
+		#vars = Globals.Vars()
+		#vars.CurrentHandler = self.KeyHandle
+		#vars.CurrentHandler_js = self.JoyHandle
 	
 	def show_menu(self):
 		self.LevelState = LevelState.MENU
@@ -81,7 +82,7 @@ class LevelControl():
 		vars = Globals.Vars()
 		vars.Running = False
 	
-	def load_level(self, levelObj):
+	def preload_level(self, levelObj):
 		if isinstance(levelObj, LevelBase):
 			self.LoadedLevels.append(levelObj)
 			self.CurrentLevel = levelObj
@@ -108,7 +109,7 @@ class LevelControl():
 class DefaultLevel(LevelBase):
 	def __init__(self):
 		self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
-		self.JoyHandle = EventHandler.JoyHandler("Defualt Level Joy Handle")
+		self.JoyHandle = EventHandler.JoyHandler("Default Level Joy Handle")
 
 		## Actual level stuff now
 		self.NextSpawn = 0
@@ -116,8 +117,9 @@ class DefaultLevel(LevelBase):
 		self.Player = GameObjects.Player()
 		self.Projectiles = pygame.sprite.Group()
 		
-		self.InitControls()
 		self.rand = random.Random()
+		
+		self.InitControls()
 
 	def InitControls(self):
 		self.KeyHandle.clear_all()
@@ -138,6 +140,7 @@ class DefaultLevel(LevelBase):
 	
 	def update(self):
 		vars = Globals.Vars()
+			
 		if self.NextSpawn <= 0:
 			x = self.rand.randint(vars.Bounds.left, vars.Bounds.right)
 			y = 0
@@ -169,7 +172,8 @@ class DefaultLevel(LevelBase):
 		self.Enemies.draw(screen)
 		self.Player.draw(screen)
 		self.Projectiles.draw(screen)
-			
+
+"""		
 ## FIXME: Move this somewhere else once it starts working
 class LevelOne(LevelBase):
 	class lvlEnemy(GameObjects.Enemy):
@@ -219,3 +223,4 @@ class LevelOne(LevelBase):
 
 	def m_return_to_main(self):
 		pass
+"""
