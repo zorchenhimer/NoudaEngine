@@ -26,8 +26,6 @@ class Vehicle(pygame.sprite.Sprite):
 		
 		self.image = Globals.LoadImage(spritePath)
 		self.rect = self.image.get_rect()
-		#self.rect.center = self.vars.Bounds.center
-#		self.vars.gameSprites.add(self)
 		self.firing = False
 		self.nextFire = 0	# Ticks until next fire
 		
@@ -42,9 +40,6 @@ class Vehicle(pygame.sprite.Sprite):
 		self.FireRate = 5
 	
 	def update(self):
-		#if self.type is UnitType.ENEMY and self.path is None:
-		#	self.kill() ## lol, is this defined anywhere?
-
 		## Fire a bullet if it's time	
 		if self.nextFire > 0:
 			self.nextFire -= 1
@@ -85,23 +80,15 @@ class Vehicle(pygame.sprite.Sprite):
 		
 	def MoveLeft(self, on=False):
 		self.movingLeft = on
-		if on:
-			Debug("> Left")
 	
 	def MoveRight(self, on=False):
 		self.movingRight = on
-		if on:
-			Debug("> Right")
 	
 	def MoveUp(self, on=False):
 		self.movingUp = on
-		if on:
-			Debug("> Up")
 	
 	def MoveDown(self, on=False):
 		self.movingDown = on
-		if on:
-			Debug("> Down")
 
 	def tostring(self):
 		typetext = 'Unknown'
@@ -144,9 +131,7 @@ class Enemy(Vehicle):
 	def __init__(self):
 		Vehicle.__init__(self)
 		self.firing = False
-		self.path = None# MovementPath(self)#'enemy-path.dat')
-		#self.path.load_basic_path()
-		#self.rect.center = self.path.get_position()
+		self.path = None
 	
 	def set_path(self, path):
 		self.path = path

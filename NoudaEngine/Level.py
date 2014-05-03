@@ -16,8 +16,7 @@ class LevelState():
 	GAME = 2
 	GAMEOVER = 3
 
-## TODO: load all this shit from a file or something
-## TODO: make a level controller class that loads levels and directs the state
+## TODO: Level storage and loading.
 class LevelBase():
 	def __init__(self, level_id=None):
 		self.LevelID = None
@@ -53,10 +52,6 @@ class LevelControl():
 		self.GameOverMenu.set_title('Game Over')
 		self.GameOverMenu.add_item(1, 'Return to main menu', self.m_exit_to_main)
 		self.GameOverMenu.add_item(2, 'Exit', self.m_exit)
-		
-		#vars = Globals.Vars()
-		#vars.CurrentHandler = self.KeyHandle
-		#vars.CurrentHandler_js = self.JoyHandle
 	
 	def show_menu(self):
 		self.LevelState = LevelState.MENU
@@ -76,7 +71,6 @@ class LevelControl():
 		vars.UpperState = Globals.GameState.MENU
 		vars.CurrentHandler = vars.MainMenu.KeyHandle
 		vars.CurrentHandler_js = vars.MainMenu.JoyHandle
-
 	
 	def m_exit(self):
 		vars = Globals.Vars()
@@ -173,55 +167,3 @@ class DefaultLevel(LevelBase):
 		self.Enemies.draw(screen)
 		self.Player.draw(screen)
 		self.Projectiles.draw(screen)
-
-"""		
-## FIXME: Move this somewhere else once it starts working
-class LevelOne(LevelBase):
-	class lvlEnemy(GameObjects.Enemy):
-		## TODO: add some AI or something...
-		def __init__(self):
-			GameObjects.Enemy.__init__(self)
-			self.firing = True
-			self.path = Pathing.MovementPath()
-			self.path.add_waypoint(Pathing.MovementPath.Mode.DANCE, (20, 20), 0)
-			self.path.add_waypoint(Pathing.MovementPath.Mode.DANCE, (700, 20), 200)
-			self.path.add_waypoint(Pathing.MovementPath.Mode.DANCE, (20, 20), 400)
-
-		def draw(self, screen):
-			screen.blit(self.image, self.rect)
-	
-	class lvlOneStates():
-		GAME = 1
-		MENU = 2
-
-	def __init__(self):
-		self.vars = Globals.Vars()
-		self.GameOverMenu = SimpleMenu()
-		self.Player = self.vars.Player()
-		self.Enemy = lvlEnemy()
-
-		self.GameOverMenu.set_title("Game Over")
-		self.GameOverMenu.add_item(1, "Return To Main", self.m_return_to_main)
-		self.GameOverMune.add_item(2, "Exit", self.m_exit)
-		
-		self.CurrentState = lvlOneStates.GAME
-
-		if self.Player is None:
-			self.Player = GameObjects.Player()
-	
-	def set_bindings(self):
-		pass
-
-	def update(self):
-		self.Enemy.update()
-		self.Player.update()
-
-		if self.Enemy is None:
-			pass	#Gameover
-	
-	def m_exit(self):
-		self.vars.Running = False
-
-	def m_return_to_main(self):
-		pass
-"""

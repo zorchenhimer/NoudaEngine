@@ -23,13 +23,13 @@ class KeyHandler():
 		Debug("Initializing a new KeyHandler()" + strname + " [" + str(self.randID) + "]")
 	
 	def dump_bindings(self):
-		print "Keydown assignments"
+		Debug(" === Keydown assignments === ")
 		for k in self.keydown_assignments:
-			print str(k) + ' ' + str(self.keydown_assignments[k]['callback']) + ' ' + str(self.keydown_assignments[k]['args'])
+			Debug(str(k) + ' ' + str(self.keydown_assignments[k]['callback']) + ' ' + str(self.keydown_assignments[k]['args']))
 		
-		print "Keyup assignments"
+		Debug(" === Keyup assignments === ")
 		for k in self.keyup_assignments:
-			print str(k) + ' ' + str(self.keyup_assignments[k]['callback']) + ' ' + str(self.keyup_assignments[k]['args'])
+			Debug(str(k) + ' ' + str(self.keyup_assignments[k]['callback']) + ' ' + str(self.keyup_assignments[k]['args']))
 	
 	def add_keydown_handle(self, key, callback, args=None):
 		""" Add a handler for a given key down event. args are passed to the callback function. """
@@ -75,12 +75,18 @@ class KeyHandler():
 	
 	def copy(self):
 		return copy.copy(self)
-		
-## TODO: dead zone calibration.
-## TODO: Joystick factory of sorts.  Do the joystick detection here.
+
+## TODO: Analogue sticks
 class JoyHandler():
+	"""
+		Handle all joystick input for the given context
+	"""
 	class RealHandler():
 		class MrHat():
+			"""
+				Update the values of the hat.  Making this a class gives the
+				possibility of supporting more than one hat.
+			"""
 			def __init__(self, handler):
 				self.__PosX = False
 				self.__PosY = False
@@ -159,7 +165,6 @@ class JoyHandler():
 			self.ButtonHandler = KeyHandler(str(name) + " [auto]")
 			
 			self.hat = JoyHandler.RealHandler.MrHat(self.ButtonHandler)
-			self.lastHat = []
 			self.axes = []
 			self.joystick = pygame.joystick.Joystick(0) ## We only care about the first joystick, for now.
 			self.joystick.init()
@@ -187,7 +192,6 @@ class JoyHandler():
 			if self.joystick.get_numhats() > 0:
 				h = self.joystick.get_hat(0)
 				self.hat.dump_states(h)
-				
 		
 		def get_hat_value(self, hat):
 			return self.hat
@@ -212,12 +216,12 @@ class JoyHandler():
 		
 		def add_joydown_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
-				Debug("[" + self.Name + "] Adding joydown for " + str(button) + " with callback " + str(callback))
+				#Debug("[" + self.Name + "] Adding joydown for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keydown_handle(button, callback, args)
 		
 		def add_joyup_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
-				Debug("[" + self.Name + "] Adding joyup for " + str(button) + " with callback " + str(callback))
+				#Debug("[" + self.Name + "] Adding joyup for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keyup_handle(button, callback, args)
 		
 		def add_joyhold_handle(self, button, callback, joy=0):

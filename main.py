@@ -18,9 +18,6 @@ import NoudaEngine.Logger
 from NoudaEngine.Logger import *
 from NoudaEngine.Globals import FixPath
 
-####
-## TODO: try using dirty sprites to speed things up on the pi
-
 ## FIXME: sticky keys when you enter the menu with a keyhold event active
 
 class GameEngine():
@@ -82,12 +79,6 @@ class GameEngine():
 		
 		self.vars.CurrentHandler = self.Menu.KeyHandle
 		self.vars.CurrentHandler_js = self.Menu.JoyHandle
-		
-		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
-
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle
-		
-		#self.vars.CurrentLevel = NoudaEngine.Level.DefaultLevel()
 
 		Info("Init finished.")
 	
@@ -111,14 +102,10 @@ class GameEngine():
 		self.vars.MainMenu.update()
 		
 		## Set this here so we don't have to re-draw all of the sprites each
-		## tick wen the menu is active.
+		## tick when the menu is active.
 		self.vars.MainMenu.set_background(self.screen.copy())
-	
-	def set_ingame_bindings(self):
-		pass
 		
 	def start_game(self):
-		self.set_ingame_bindings()
 		running = True
 		
 		nextspawn = 0
