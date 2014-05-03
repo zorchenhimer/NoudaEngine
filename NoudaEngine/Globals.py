@@ -7,10 +7,12 @@ import platform
 import os.path as path
 from Logger import Debug, Warn, Info
 
+## This needs to move to GameObjects
 class UnitType():
 	PLAYER = 1
 	ENEMY = 2
 
+## This might be better in GameEngine().
 class GameState():
 	""" Top level game states. """
 	MENU = 1
@@ -20,6 +22,7 @@ class GameState():
 def LoadImage(path):
 	""" Return a surface containing the image at the given path. """
 	surf = None
+	path = FixPath(path)
 	try:
 		surf = pygame.Surface.convert_alpha(pygame.image.load(path))
 	except Exception as exc:
@@ -119,7 +122,6 @@ class Vars():
 				self.ScreenSize = var
 			else:
 				raise AttributeError("ScreenSize is invalid format. Received: " + str(var))
-			#Debug("Set ScreenSize to " + str(var))
 
 		@property
 		def CurrentHandler(self):
@@ -159,7 +161,6 @@ class Vars():
 		return getattr(self.__instance, attr)
 	
 	def __setattr__(self, attr, value):
-		#Debug("Setting global variable " + str(attr) + " with value " + str(value))
 		return setattr(self.__instance, attr, value)
 		
 #import inspect
