@@ -129,6 +129,7 @@ class DefaultLevel(LevelBase):
 		self.KeyHandle.add_keyhold_handle(pygame.K_UP, self.Player.MoveUp)
 		self.KeyHandle.add_keyhold_handle(pygame.K_DOWN, self.Player.MoveDown)
 		self.KeyHandle.add_keydown_handle(pygame.K_b, self.Player.FireBomb)
+		self.KeyHandle.add_keydown_handle(pygame.K_a, self.JoyHandle.dump_hats)
 		
 		self.JoyHandle.clear_all()
 		self.JoyHandle.add_joyhold_handle('hatposx', self.Player.MoveRight)

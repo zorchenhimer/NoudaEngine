@@ -88,6 +88,14 @@ class JoyHandler():
 				self.__NegY = False
 				self.__Handler = handler
 			
+			def dump_states(self, hat):
+				Debug("PosX:\t" + str(self.__PosX))
+				Debug("PosY:\t" + str(self.__PosY))
+				Debug("NegX:\t" + str(self.__NegX))
+				Debug("NegY:\t" + str(self.__NegY))
+				Debug("hat[0]: " + str(hat[0]))
+				Debug("hat[1]: " + str(hat[1]))
+			
 			def update(self, hat):
 				## Left/Right Keyup
 				if hat[0] == 0:
@@ -96,17 +104,25 @@ class JoyHandler():
 						self.__PosX = False
 						self.__Handler.do_keyup('hatposx')
 					## Left
-					elif self.__NegX is not False:
+					if self.__NegX is not False:
 						self.__NegX = False
 						self.__Handler.do_keyup('hatnegx')
 				
 				## Right Keydown
-				elif hat[0] == 1 and self.__PosX is not True:
+				if hat[0] == 1 and self.__PosX is not True:
+					if self.__NegX is True:
+						self.__NegX = False
+						self.__Handler.do_keyup('hatnegx')
+					
 					self.__PosX = True
 					self.__Handler.do_keydown('hatposx')
 				
 				## Left Keydown
-				elif hat[0] == -1 and self.__NegX is not True:
+				if hat[0] == -1 and self.__NegX is not True:
+					if self.__PosX is True:
+						self.__PosX = False
+						self.__Handler.do_keyup('hatposx')
+						
 					self.__NegX = True
 					self.__Handler.do_keydown('hatnegx')
 				
@@ -117,17 +133,25 @@ class JoyHandler():
 						self.__PosY = False
 						self.__Handler.do_keyup('hatposy')
 					## Down
-					elif self.__NegY is not False:
+					if self.__NegY is not False:
 						self.__NegY = False
 						self.__Handler.do_keyup('hatnegy')
 				
 				## Up Keydown
-				elif hat[1] == 1 and self.__PosY is not True:
+				if hat[1] == 1 and self.__PosY is not True:
+					if self.__NegY is True:
+						self.__NegY = False
+						self.__Handler.do_keyup('hatnegy')
+						
 					self.__PosY = True
 					self.__Handler.do_keydown('hatposy')
 				
 				## Down Keydown
-				elif hat[1] == -1 and self.__NegY is not True:
+				if hat[1] == -1 and self.__NegY is not True:
+					if self.__PosY is True:
+						self.__PosY = False
+						self.__Handler.do_keyup('hatposy')
+						
 					self.__NegY = True
 					self.__Handler.do_keydown('hatnegy')
 				
@@ -158,7 +182,13 @@ class JoyHandler():
 			for i in range(len(self.axes)):
 				axis = self.joystick.get_axis(i)
 				self.axes[i] = axis
-			
+		
+		def dump_hats(self):
+			if self.joystick.get_numhats() > 0:
+				h = self.joystick.get_hat(0)
+				self.hat.dump_states(h)
+				
+		
 		def get_hat_value(self, hat):
 			return self.hat
 		
@@ -235,6 +265,10 @@ class JoyHandler():
 		if self.real_handle is not None:
 			return self.real_handle.get_axis_value(axis)
 		return 0
+	
+	def dump_hats(self):
+		if self.real_handle is not None:
+			self.real_handle.dump_hats()
 	
 	def dump_bindings(self):
 		if self.real_handle is not None:
