@@ -27,9 +27,9 @@ class GameEngine():
 		Info("Starting init...")
 		self.vars = NoudaEngine.Globals.Vars()
 		self.width, self.height = [w, h]
+		os.environ['SDL_VIDEO_CENTERED'] = '1'
 		self.screen = pygame.display.set_mode((self.width, self.height))#, pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
 		Debug("Creating screen with dimensions " + str((w, h)))
-		os.environ['SDL_VIDEO_CENTERED'] = '1'	## FIXME: THIS SHIT DON'T WORK
 		pygame.init()
 		pygame.joystick.init()
 		
