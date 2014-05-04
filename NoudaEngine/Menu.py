@@ -11,8 +11,8 @@ from Logger import *
 __all__ = ["MenuItem", "MenuBase", "SimpleMenu"]
 
 class MenuItem():
-	def __init__(self, id, callback):
-		self.ID = id
+	def __init__(self, weight, callback):
+		self.Weight = weight
 		self.Callback = callback
 	
 	def do_select(self):
@@ -20,10 +20,10 @@ class MenuItem():
 			self.Callback()
 		
 	def update(self):
-		pass
+		raise NotImplementedError
 	
 	def draw(self, screen):
-		pass
+		raise NotImplementedError
 
 class MenuBase():
 	def __init__(self):
@@ -38,12 +38,6 @@ class MenuBase():
 	def _init_controls(self):
 		self.KeyHandle = EventHandler.KeyHandler("Menu Key Handler")
 		self.JoyHandle = EventHandler.JoyHandler("Menu Joy Handler")
-
-		## FIXME: Move this to some central place so we only do it once.  Maybe store the object in Globals?
-		"""if pygame.joystick.get_count() > 0:
-			js = pygame.joystick.Joystick(0)
-			js.init()
-			self.JoyHandle = EventHandler.JoyHandler(js, "Menu Joy Handler with " + js.get_name())"""
 
 		# Shouldn't neet to clear_all(), but w/e
 		self.KeyHandle.clear_all()
@@ -85,8 +79,8 @@ class MenuBase():
 		
 class SimpleMenu(MenuBase):
 	class SimpleMenuItem(MenuItem):
-		def __init__(self, id, font, color, text, callback):
-			MenuItem.__init__(self, id, callback)
+		def __init__(self, weight, font, color, text, callback):
+			MenuItem.__init__(self, weight, callback)
 			self.Text = text
 			self.Color = (220, 202, 232)
 			self.image = font.render(text, True, self.Color).convert_alpha()
@@ -94,19 +88,8 @@ class SimpleMenu(MenuBase):
 			
 	def __init__(self):
 		MenuBase.__init__(self)
-		#self.vars = Globals.Vars()
-		#self.Font = pygame.font.Font("profont.ttf", 25)
-		#self.FontColor = (255, 255, 255)
 		self.MenuItems = []
-		
-#		Debug("ScreenSize: " + str(self.vars.ScreenSize))
-
-		#self.background = pygame.Surface(self.vars.ScreenSize)
-		#self.Dirty = True
-		
 		self.GameBackground = None
-		
-		#self.background.fill((0, 0, 0))
 		self.Background.set_alpha(127)
 		
 		self.ItemsWidth = 0
@@ -116,11 +99,6 @@ class SimpleMenu(MenuBase):
 		self.Cursor = pygame.transform.rotate(Globals.LoadImage('png/UI/playerLife1_red.png'), -90)
 		self.CurrentSelection = -1
 		self.Title = None
-		
-		"""self.Handler = EventHandler.KeyHandler("Simple Menu Handler")
-		self.Handler.add_keydown_handle(pygame.K_DOWN, self.MoveDown)
-		self.Handler.add_keydown_handle(pygame.K_UP, self.MoveUp)
-		self.Handler.add_keydown_handle(pygame.K_RETURN, self.SelectItem)"""
 	
 	def set_background(self, screen):
 		self.GameBackground = screen
@@ -129,8 +107,8 @@ class SimpleMenu(MenuBase):
 		titlefont = pygame.font.Font(self.vars.DefaultFontPath, 40)
 		self.Title = titlefont.render(text, True, self.FontColor).convert_alpha()
 	
-	def add_item(self, id, text, callback=None):
-		self.MenuItems.append(SimpleMenu.SimpleMenuItem(id, self.Font, self.FontColor, text, callback))
+	def add_item(self, weight, text, callback=None):
+		self.MenuItems.append(SimpleMenu.SimpleMenuItem(weight, self.Font, self.FontColor, text, callback))
 		if len(self.MenuItems) >= 1:
 			self.CurrentSelection = 0
 		
@@ -138,6 +116,9 @@ class SimpleMenu(MenuBase):
 			if self.ItemsWidth < i.image.get_width():
 				self.ItemsWidth = i.image.get_width()
 			self.ItemsHeight += i.image.get_height() + self.ItemPadding
+		
+		# Sort the menu items by weight
+		self.MenuItems = sorted(self.MenuItems, key=lambda item: item.Weight)
 		
 	def draw(self, surface):
 		MenuBase.draw(self, surface)

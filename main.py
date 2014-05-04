@@ -15,6 +15,8 @@ import NoudaEngine.Level
 import NoudaEngine.Pathing
 import NoudaEngine.Logger
 
+import NoudaEngine.LevelAsteroids
+
 from NoudaEngine.Logger import *
 from NoudaEngine.Globals import FixPath
 
@@ -67,19 +69,22 @@ class GameEngine():
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		
-		self.Menu = NoudaEngine.Menu.SimpleMenu()
+		"""self.Menu = NoudaEngine.Menu.SimpleMenu()
 		self.Menu.set_title('Main Menu')
 		self.Menu.add_item(1, 'Start Game', self.m_start_game)
 		self.Menu.add_item(2, 'Exit', self.m_exit_game)
-		self.vars.MainMenu = self.Menu
+		self.vars.MainMenu = self.Menu"""
 		
-		self.vars.CurrentHandler = self.Menu.KeyHandle
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle
+		"""self.vars.CurrentHandler = self.Menu.KeyHandle
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle"""
 		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
 		
-		self.vars.CurrentHandler = self.Menu.KeyHandle
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle
+		"""self.vars.CurrentHandler = self.Menu.KeyHandle
+		self.vars.CurrentHandler_js = self.Menu.JoyHandle"""
 
+		self.vars.LevelControl.preload_level(NoudaEngine.Level.DefaultLevel())
+		self.vars.LevelControl.preload_level(NoudaEngine.LevelAsteroids.Asteroids())
+		
 		Info("Init finished.")
 	
 	def m_start_game(self):
@@ -94,7 +99,7 @@ class GameEngine():
 		
 	def show_menu(self):
 		self.vars.UpperState = NoudaEngine.Globals.GameState.MENU
-		self.vars.LevelControl.CurrentLevel.Player.StopFire()
+		#self.vars.LevelControl.CurrentLevel.Player.StopFire()
 		self.vars.CurrentHandler = self.vars.MainMenu.KeyHandle
 		self.vars.CurrentHandler_js = self.vars.MainMenu.JoyHandle
 		
@@ -138,7 +143,7 @@ class GameEngine():
 				self.vars.LevelControl.update()
 			
 			## Draw stuff
-			if self.vars.UpperState == NoudaEngine.Globals.GameState.MENU:
+			"""if self.vars.UpperState == NoudaEngine.Globals.GameState.MENU:
 				## Draw the menu.
 				if firstloop:
 					## Grab the screen before the menu is displayed so we can
@@ -153,7 +158,8 @@ class GameEngine():
 				## Draw the level.
 				## TODO: Move the background into the level code.
 				self.screen.blit(self.sizedBackground, (0,0))
-				self.vars.LevelControl.draw(self.screen)
+				self.vars.LevelControl.draw(self.screen)"""
+			self.vars.LevelControl.draw(self.screen)
 
 			self.hud.set_text(NoudaEngine.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))
 			

@@ -14,9 +14,9 @@ class Asteroids(Level.LevelBase):
 			imagelist = [ "MeteorBrown_big1.png", "MeteorBrown_big2.png", "MeteorBrown_big3.png", "MeteorBrown_big4.png" ]
 			r = random.Random()
 			
-			vars = Globals.Vars()
+			vars = Vars()
 			startX = r.randint(vars.Bounds.left, vars.Bounds.right)
-			startY = r.randint(vars.Bounds.top, vars.bounds.bottom)
+			startY = r.randint(vars.Bounds.top, vars.Bounds.bottom)
 			angle = r.randint(0, 360)
 			
 			Projectiles.Projectile.__init__(self, startX, startY, angle)
@@ -26,6 +26,7 @@ class Asteroids(Level.LevelBase):
 			self.Speed = 0.5
 			
 	def __init__(self):
+		Level.LevelBase.__init__(self, 'Asteroids')
 		self.Asteroids = pygame.sprite.Group()
 		for i in range(1, 3):
 			self.Asteroids.add(Asteroids.BigRock())

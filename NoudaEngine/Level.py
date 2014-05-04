@@ -12,6 +12,7 @@ from Logger import *
 
 
 class LevelState():
+	MAINMENU = 0
 	MENU = 1
 	GAME = 2
 	GAMEOVER = 3
@@ -34,14 +35,11 @@ class LevelControl():
 		## Sorted list of LevelData() objects
 		self.LoadedLevels = []
 		self.CurrentLevel = None
-		self.KeyHandle = None
-		self.JoyHandle = None
 		self.LevelState = LevelState.GAME
 		
-		lvlone = DefaultLevel()
-		self.preload_level(lvlone)
-		
-		self.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_menu)
+		self.MainMenu = SimpleMenu()
+		self.MainMenu.set_title('Main Menu')
+		self.MainMenu.add_item(10, 'Exit', self.m_exit)
 		
 		self.LevelMenu = SimpleMenu()
 		self.LevelMenu.set_title('Paused')
@@ -62,8 +60,8 @@ class LevelControl():
 	def m_resume(self):
 		self.LevelState = LevelState.GAME
 		vars = Globals.Vars()
-		vars.CurrentHandler = self.KeyHandle
-		vars.CurrentHandler_js = self.JoyHandle
+		vars.CurrentHandler = self.CurrentLevel.KeyHandle
+		vars.CurrentHandler_js = self.CurrentLevel.JoyHandle
 	
 	def m_exit_to_main(self):
 		self.m_resume()
@@ -76,12 +74,21 @@ class LevelControl():
 		vars = Globals.Vars()
 		vars.Running = False
 	
+	def start_level(self, levelid):
+		vars = Globals.Vars()
+		for l in self.LoadedLevels:
+			if l.LevelID == levelid:
+				self.CurrentLevel = l
+				vars.CurrentHandler = l.KeyHandle
+				vars.CurrentHandler_js = l.JoyHandle
+				self.LevelMenu = l.LevelMenu
+				self.CurrentLevel.init_controls()
+				self.CurrentLevel.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_menu)
+	
 	def preload_level(self, levelObj):
 		if isinstance(levelObj, LevelBase):
 			self.LoadedLevels.append(levelObj)
-			self.CurrentLevel = levelObj
-			self.KeyHandle = self.CurrentLevel.KeyHandle
-			self.JoyHandle = self.CurrentLevel.JoyHandle
+			self.MainMenu.add_item(len(self.LoadedLevels) + 1, levelObj.LevelID, self.start_level)
 		else:
 			raise TypeError("Level is not correct type in load_level()!")
 
@@ -93,15 +100,22 @@ class LevelControl():
 		if self.LevelState is LevelState.GAME:
 			if self.CurrentLevel is not None:
 				self.CurrentLevel.draw(screen)
+			else:
+				Warn("CurrentLevel is None! returning to the main menu.")
+				self.LevelState = LevelState.MAINMENU
+				self.MainMenu.draw(screen)
 		elif self.LevelState is LevelState.MENU:
 			self.LevelMenu.draw(screen)
+		elif self.LevelState is LevelState.MAINMENU:
+			self.MainMenu.draw(screen)
 		elif self.LevelState is LevelState.GAMEOVER:
-			pass
+			self.GameOverMenu.draw(screen)
 		else:
 			raise NotImplementedError("Whoops.  From LevelControl.draw().")
 
 class DefaultLevel(LevelBase):
 	def __init__(self):
+		LevelBase.__init__(self, 'Default Level')
 		self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
 		self.JoyHandle = EventHandler.JoyHandler("Default Level Joy Handle")
 
