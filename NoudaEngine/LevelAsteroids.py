@@ -11,7 +11,7 @@ class Asteroids(Level.LevelBase):
 	class BigRock(Projectiles.Projectile):
 		def __init__(self):
 			imagepathprefix = "png/Meteors/"
-			imagelist = [ "MeteorBrown_big1.png", "MeteorBrown_big2.png", "MeteorBrown_big3.png", "MeteorBrown_big4.png" ]
+			imagelist = [ "meteorBrown_big1.png", "meteorBrown_big2.png", "meteorBrown_big3.png", "meteorBrown_big4.png" ]
 			r = random.Random()
 			
 			vars = Vars()

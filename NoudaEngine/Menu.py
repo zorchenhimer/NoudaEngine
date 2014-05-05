@@ -103,6 +103,8 @@ class SimpleMenu(MenuBase):
 		self.Cursor = pygame.transform.rotate(Globals.LoadImage('png/UI/playerLife1_red.png'), -90)
 		self.CurrentSelection = -1
 		self.Title = None
+
+		self.set_background(Globals.TileImage('png/Backgrounds/blue.png'))
 	
 	def set_background(self, screen):
 		self.GameBackground = screen

@@ -5,6 +5,7 @@
 import pygame
 import platform
 import os.path as path
+import math
 from Logger import Debug, Warn, Info
 
 ## This needs to move to GameObjects
@@ -41,6 +42,26 @@ def FixPath(p):
 		return path.abspath(p.replace('/', '\\'))
 	else:
 		return path.abspath(p.replace('\\', '/'))
+
+def TileImage(surf):
+	"""
+		Return a new surface the size of the screen with the given
+		surface tiled in both directions.
+	"""
+
+	vars = Vars()
+	if isinstance(surf, pygame.Surface):
+		newsurf = pygame.Surface(vars.ScreenSize)
+		widthRepeat = int(math.ceil(newsurf.get_width() / surf.get_width()))
+		heightRepeat = int(math.ceil(newsurf.get_height() / surf.get_height()))
+		
+		(surfW, surfH) = surf.get_size()
+		for h in range(0, heightRepeat + 1):
+			for w in range(0, widthRepeat + 1):
+				newsurf.blit(surf, (w * surfW, h * surfH))
+	else:
+		return TileImage(LoadImage(surf))
+	return newsurf
 
 class Vars():
 	## Actual class here.

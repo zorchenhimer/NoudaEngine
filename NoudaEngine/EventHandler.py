@@ -63,8 +63,8 @@ class KeyHandler():
 				self.keyup_assignments[key]['callback'](self.keyup_assignments[key]['args'])
 			else:
 				self.keyup_assignments[key]['callback']()
-		else:
-			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keyup: " + str(key))
+#		else:
+#			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keyup: " + str(key))
 	
 	def clear_all(self):
 		""" Reset all events. """

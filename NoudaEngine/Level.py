@@ -97,6 +97,7 @@ class LevelControl():
 				vars.CurrentHandler_js = l.JoyHandle
 				self.CurrentLevel.init_controls()
 				self.CurrentLevel.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_level_menu)
+				self.LevelState = LevelState.GAME
 	
 	def preload_level(self, levelObj):
 		if isinstance(levelObj, LevelBase):
@@ -156,7 +157,7 @@ class DefaultLevel(LevelBase):
 		self.Projectiles = pygame.sprite.Group()
 		
 		## Load the background and pre-calculate its dimensions
-		vars = Globals.Vars()
+		"""vars = Globals.Vars()
 		background = Globals.LoadImage('png/Backgrounds/purple.png')
 		self.Background = pygame.Surface(vars.ScreenSize)
 		widthRepeat = int(math.ceil(self.Background.get_width() / background.get_width()))
@@ -166,7 +167,8 @@ class DefaultLevel(LevelBase):
 		(bgwidth, bgheight) = background.get_size()
 		for h in range(0, heightRepeat + 1):
 			for w in range(0, widthRepeat + 1):
-				self.Background.blit(background, (w * bgwidth, h * bgheight))
+				self.Background.blit(background, (w * bgwidth, h * bgheight))"""
+		self.Background = Globals.TileImage('png/Backgrounds/purple.png')
 		
 		self.rand = random.Random()
 		self.init_controls()

@@ -57,16 +57,16 @@ class GameEngine():
 		border = 30
 		
 		## Calculate the bounding box
-		bounds = self.screen.get_rect()
+		"""bounds = self.screen.get_rect()
 		bounds.top += border
 		bounds.left += border
 		bounds.width -= border * 2
-		bounds.height -= border * 2
+		bounds.height -= border * 2"""
 		
 		## Make the bounding box visible
-		pygame.draw.rect(self.sizedBackground, pygame.Color(0, 0, 0), bounds, 1)
+		#pygame.draw.rect(self.sizedBackground, pygame.Color(0, 0, 0), bounds, 1)
 		
-		self.vars.Bounds = bounds
+		self.vars.Bounds = self.screen.get_rect() #bounds
 		self.vars.ScreenSize = self.screen.get_size()
 		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
 
