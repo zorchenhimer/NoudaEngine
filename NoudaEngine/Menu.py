@@ -127,7 +127,7 @@ class SimpleMenu(MenuBase):
 		self.MenuItems = sorted(self.MenuItems, key=lambda item: item.Weight)
 		
 	def draw(self, surface):
-		MenuBase.draw(self, surface)
+		#MenuBase.draw(self, surface)
 		
 		startx = self.Background.get_rect().centerx - self.ItemsWidth / 2
 		starty = self.Background.get_rect().centery - self.ItemsHeight / 2

@@ -63,6 +63,7 @@ class LevelControl():
 		vars = Globals.Vars()
 		vars.CurrentHandler = self.LevelMenu.KeyHandle
 		vars.CurrentHandler_js = self.LevelMenu.JoyHandle
+		self.LevelMenu.set_background(self.CurrentLevel.draw(pygame.Surface(vars.ScreenSize)))
 	
 	def debug_dump(self):
 		Debug(" == Dumping loaded levels ==")

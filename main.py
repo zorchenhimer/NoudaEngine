@@ -39,32 +39,7 @@ class GameEngine():
 		Debug("Ticks per second cap: " + str(self.tps))
 		self.clock = pygame.time.Clock()		## Might want to move this to Globals.Vars() for physics or frame-independent timing
 		self.hud = NoudaEngine.HeadsUpDisplay.HUD(self.screen.get_size())
-		
-		## Load the background and pre-calculate its dimensions
-		background = NoudaEngine.Globals.LoadImage('png/Backgrounds/purple.png')
-		self.sizedBackground = pygame.Surface(self.screen.get_size())
 		Debug(str(self.screen.get_size()))
-		widthRepeat = int(math.ceil(self.sizedBackground.get_width() / background.get_width()))
-		heightRepeat = int(math.ceil(self.sizedBackground.get_height() / background.get_height()))
-		
-		## Tile the background image to fill the screen.
-		(bgwidth, bgheight) = background.get_size()
-		for h in range(0, heightRepeat + 1):
-			for w in range(0, widthRepeat + 1):
-				self.sizedBackground.blit(background, (w * bgwidth, h * bgheight))
-		
-		## Bounds border in pixels
-		border = 30
-		
-		## Calculate the bounding box
-		"""bounds = self.screen.get_rect()
-		bounds.top += border
-		bounds.left += border
-		bounds.width -= border * 2
-		bounds.height -= border * 2"""
-		
-		## Make the bounding box visible
-		#pygame.draw.rect(self.sizedBackground, pygame.Color(0, 0, 0), bounds, 1)
 		
 		self.vars.Bounds = self.screen.get_rect() #bounds
 		self.vars.ScreenSize = self.screen.get_size()
