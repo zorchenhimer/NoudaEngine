@@ -22,8 +22,8 @@ class LevelState():
 class LevelBase():
 	def __init__(self, level_id=None):
 		self.LevelID = level_id
-		self.KeyHandle = None
-		self.JoyHandle = None
+		self.KeyHandle = EventHandler.KeyHandler(str(self.LevelID))
+		self.JoyHandle = EventHandler.JoyHandler(str(self.LevelID))
 		self.Background = None
 	
 	def init_controls(self):
@@ -147,8 +147,8 @@ class LevelControl():
 class DefaultLevel(LevelBase):
 	def __init__(self):
 		LevelBase.__init__(self, 'Default Level')
-		self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
-		self.JoyHandle = EventHandler.JoyHandler("Default Level Joy Handle")
+		#self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
+		#self.JoyHandle = EventHandler.JoyHandler("Default Level Joy Handle")
 
 		## Actual level stuff now
 		self.NextSpawn = 0

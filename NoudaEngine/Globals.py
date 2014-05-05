@@ -137,12 +137,12 @@ class Vars():
 		@ScreenSize.setter
 		def ScreenSize(self, var):
 			## Return value from pygame.Surface.get_size()
-			if len(var) == 4:
-				self.__ScreenSize = (var[2], var[3])
-			elif len(var) == 2:
-				self.ScreenSize = var
-			else:
-				raise AttributeError("ScreenSize is invalid format. Received: " + str(var))
+#			if len(var) == 4:
+				self.__ScreenSize = var
+#			elif len(var) == 2:
+#				self.__ScreenSize = var
+#			else:
+#				raise AttributeError("ScreenSize is invalid format. Received: " + str(var))
 
 		@property
 		def CurrentHandler(self):

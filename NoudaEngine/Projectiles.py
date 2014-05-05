@@ -8,7 +8,7 @@ import Effects
 
 class Projectile(pygame.sprite.Sprite):
 	""" All projectiles will inherit this class for a basic projectile. """
-	def __init__(self, x, y, d=None, l=-1):
+	def __init__(self, d=None, l=-1):
 		pygame.sprite.Sprite.__init__(self)
 		self.Degrees = d
 		self.Speed = 6		# Movement per tick
@@ -28,16 +28,16 @@ class Projectile(pygame.sprite.Sprite):
 		self.StepX = self.Speed * math.cos(self.Radian)
 		self.StepY = self.Speed * math.sin(self.Radian)
 	
-	def update(self):
+	def update(self, nobounds=False):
 		## This will despawn the projectile once it leaves play.
-		if not self.check_bounds():
-			self.kill()
+		"""if not nobounds:
+			if not self.check_bounds():
+				self.kill()"""
 		
 		## Move the projectile keeping in mind the direction.
 		self.rect.x += self.StepX
 		self.rect.y += self.StepY
 		
-		vars = Globals.Vars()
 	
 	def check_bounds(self):
 		vars = Globals.Vars()
@@ -55,9 +55,9 @@ class Projectile(pygame.sprite.Sprite):
 			return True
 		return False
 
-class Bullet(Projectile):		
+class Bullet(Projectile):
 	def __init__(self, t, x, y, d=None, l=-1):
-		Projectile.__init__(self, x, y, d, l)
+		Projectile.__init__(self, d, l)
 		
 		self.Type = t
 		
