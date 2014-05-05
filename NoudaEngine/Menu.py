@@ -11,13 +11,17 @@ from Logger import *
 __all__ = ["MenuItem", "MenuBase", "SimpleMenu"]
 
 class MenuItem():
-	def __init__(self, weight, callback):
+	def __init__(self, weight, callback, args):
 		self.Weight = weight
 		self.Callback = callback
+		self.Args = args
 	
 	def do_select(self):
 		if self.Callback is not None:
-			self.Callback()
+			if self.Args is not None:
+				self.Callback(self.Args)
+			else:
+				self.Callback()
 		
 	def update(self):
 		raise NotImplementedError
@@ -50,8 +54,8 @@ class MenuBase():
 		self.JoyHandle.add_joydown_handle('hatposy', self.MoveUp)
 		self.JoyHandle.add_joydown_handle(0, self.SelectItem)
 
-		self.vars.CurrentHandler_js = self.JoyHandle
-		self.vars.CurrentHandler = self.KeyHandle
+		#self.vars.CurrentHandler_js = self.JoyHandle
+		#self.vars.CurrentHandler = self.KeyHandle
 
 
 	def DoSelect(self):
@@ -79,8 +83,8 @@ class MenuBase():
 		
 class SimpleMenu(MenuBase):
 	class SimpleMenuItem(MenuItem):
-		def __init__(self, weight, font, color, text, callback):
-			MenuItem.__init__(self, weight, callback)
+		def __init__(self, weight, font, color, text, callback, args):
+			MenuItem.__init__(self, weight, callback, args)
 			self.Text = text
 			self.Color = (220, 202, 232)
 			self.image = font.render(text, True, self.Color).convert_alpha()
@@ -107,8 +111,8 @@ class SimpleMenu(MenuBase):
 		titlefont = pygame.font.Font(self.vars.DefaultFontPath, 40)
 		self.Title = titlefont.render(text, True, self.FontColor).convert_alpha()
 	
-	def add_item(self, weight, text, callback=None):
-		self.MenuItems.append(SimpleMenu.SimpleMenuItem(weight, self.Font, self.FontColor, text, callback))
+	def add_item(self, weight, text, callback=None, args=None):
+		self.MenuItems.append(SimpleMenu.SimpleMenuItem(weight, self.Font, self.FontColor, text, callback, args))
 		if len(self.MenuItems) >= 1:
 			self.CurrentSelection = 0
 		

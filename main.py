@@ -68,47 +68,14 @@ class GameEngine():
 		
 		self.vars.Bounds = bounds
 		self.vars.ScreenSize = self.screen.get_size()
-		
-		"""self.Menu = NoudaEngine.Menu.SimpleMenu()
-		self.Menu.set_title('Main Menu')
-		self.Menu.add_item(1, 'Start Game', self.m_start_game)
-		self.Menu.add_item(2, 'Exit', self.m_exit_game)
-		self.vars.MainMenu = self.Menu"""
-		
-		"""self.vars.CurrentHandler = self.Menu.KeyHandle
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle"""
 		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
-		
-		"""self.vars.CurrentHandler = self.Menu.KeyHandle
-		self.vars.CurrentHandler_js = self.Menu.JoyHandle"""
 
 		self.vars.LevelControl.preload_level(NoudaEngine.Level.DefaultLevel())
 		self.vars.LevelControl.preload_level(NoudaEngine.LevelAsteroids.Asteroids())
 		
 		Info("Init finished.")
-	
-	def m_start_game(self):
-		Info("'Start Game' menu item selected.  Starting game.")
-		self.vars.UpperState = NoudaEngine.Globals.GameState.GAME
-		self.vars.CurrentHandler = self.vars.LevelControl.KeyHandle
-		self.vars.CurrentHandler_js = self.vars.LevelControl.JoyHandle
-	
-	def m_exit_game(self):
-		Info("'Exit Game' menu item selected.  Exiting.")
-		self.vars.Running = False
 		
-	def show_menu(self):
-		self.vars.UpperState = NoudaEngine.Globals.GameState.MENU
-		#self.vars.LevelControl.CurrentLevel.Player.StopFire()
-		self.vars.CurrentHandler = self.vars.MainMenu.KeyHandle
-		self.vars.CurrentHandler_js = self.vars.MainMenu.JoyHandle
-		
-		self.vars.MainMenu.Dirty = True
-		self.vars.MainMenu.update()
-		
-		## Set this here so we don't have to re-draw all of the sprites each
-		## tick when the menu is active.
-		self.vars.MainMenu.set_background(self.screen.copy())
+		self.start_game()
 		
 	def start_game(self):
 		running = True
@@ -126,6 +93,8 @@ class GameEngine():
 					if event.key is pygame.K_F12 or event.key is pygame.K_s:
 						pygame.image.save(self.screen, 'screenshot.png')
 						Info('Screenshot saved.')
+					if event.key is pygame.K_z:
+						Debug("CurrentHandler: " + self.vars.CurrentHandler.Name + " [" + str(self.vars.CurrentHandler.randID) + "]")
 					self.vars.CurrentHandler.do_keydown(event.key)
 				if event.type == pygame.KEYUP:
 					self.vars.CurrentHandler.do_keyup(event.key)
@@ -139,26 +108,10 @@ class GameEngine():
 			if self.vars.Running == False:
 				continue
 			
-			if self.vars.UpperState == NoudaEngine.Globals.GameState.GAME or firstloop:
-				self.vars.LevelControl.update()
+			#if self.vars.UpperState == NoudaEngine.Globals.GameState.GAME or firstloop:
+			self.vars.LevelControl.update()
 			
 			## Draw stuff
-			"""if self.vars.UpperState == NoudaEngine.Globals.GameState.MENU:
-				## Draw the menu.
-				if firstloop:
-					## Grab the screen before the menu is displayed so we can
-					## display it as the background without redrawing everything
-					## every frame.
-					self.screen.blit(self.sizedBackground, (0, 0))
-					self.show_menu()
-					firstloop = False
-				self.vars.MainMenu.draw(self.screen)
-				
-			elif self.vars.UpperState == NoudaEngine.Globals.GameState.GAME:
-				## Draw the level.
-				## TODO: Move the background into the level code.
-				self.screen.blit(self.sizedBackground, (0,0))
-				self.vars.LevelControl.draw(self.screen)"""
 			self.vars.LevelControl.draw(self.screen)
 
 			self.hud.set_text(NoudaEngine.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))

@@ -54,7 +54,7 @@ class KeyHandler():
 			else:
 				self.keydown_assignments[key]['callback']()
 		else:
-			Debug("[" + self.Name +"] Unbound keydown: " + str(key))
+			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keydown: " + str(key))
 	
 	def do_keyup(self, key):
 		""" Execute a key up event's callback. """
@@ -64,7 +64,7 @@ class KeyHandler():
 			else:
 				self.keyup_assignments[key]['callback']()
 		else:
-			Debug("[" + self.Name +"] Unbound keyup: " + str(key))
+			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keyup: " + str(key))
 	
 	def clear_all(self):
 		""" Reset all events. """
