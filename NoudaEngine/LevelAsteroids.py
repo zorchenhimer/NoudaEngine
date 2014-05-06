@@ -12,45 +12,20 @@ from Globals import LoadImage, Vars, UnitType, TileImage
 from Logger import Debug
 
 class Asteroids(Level.LevelBase):
-	class RockClone():
-		def __init__(self):
-			self.image = LoadImage('png/Meteors/meteorGrey_big1.png')
-			self.rect = self.image.get_rect()
-			vars = Vars()
-			
-			self.TopRect = pygame.Rect(0,0, vars.ScreenSize[0], vars.ScreenSize[1] / 2)
-			self.LeftRect = pygame.Rect(0,0, vars.ScreenSize[0] / 2, vars.ScreenSize[1])
-			
-			self.TRColor = pygame.Color('darkred')
-			self.LRColor = pygame.Color('darkblue')
-			self.linecolor = pygame.Color('black')
-			
-			self.TRColor.a = 127
-			self.LRColor.a = 127
-		
-		def draw(self, screen):
-			vars = Vars()
-			screen.blit(self.image, self.rect)
-			pygame.draw.line(screen, self.linecolor, (self.rect.centerx, self.rect.centery), (vars.ScreenSize[0] / 2, vars.ScreenSize[1] / 2))
-		
-		def draw_rect(self, screen):
-			vars = Vars()
-			tmpscr = pygame.Surface(vars.ScreenSize, flags=pygame.SRCALPHA)
-			pygame.draw.rect(tmpscr, self.TRColor, self.TopRect)
-			pygame.draw.rect(tmpscr, self.LRColor, self.LeftRect)
-			screen.blit(tmpscr, (0,0))
-			
 	class BigRock(Projectiles.Projectile):
+		"""
+			Biggest Rock.
+			TODO: make a base rock class.
+		"""
 		def __init__(self):
 			imagepathprefix = "png/Meteors/"
-			imagelist = [ "meteorBrown_big1.png" ]#, "meteorBrown_big2.png", "meteorBrown_big3.png", "meteorBrown_big4.png" ]
+			imagelist = [ "meteorBrown_big1.png" , "meteorBrown_big2.png", "meteorBrown_big3.png", "meteorBrown_big4.png" ]
 			r = random.Random()
 			
 			vars = Vars()
-			startX = vars.ScreenSize[0] / 2#r.randint(vars.Bounds.left + 20, vars.Bounds.right - 20)
-			startY = vars.ScreenSize[1] / 2#r.randint(vars.Bounds.top + 20, vars.Bounds.bottom - 20)
-			angle = 22.5#r.randint(0, 360)
-			self.linecolor = pygame.Color('black')
+			startX = r.randint(vars.Bounds.left + 20, vars.Bounds.right - 20)
+			startY = r.randint(vars.Bounds.top + 20, vars.Bounds.bottom - 20)
+			angle = r.randint(0, 360)
 			
 			Projectiles.Projectile.__init__(self, angle)
 			self.image = LoadImage(imagepathprefix + r.choice(imagelist))
@@ -64,59 +39,17 @@ class Asteroids(Level.LevelBase):
 			self.Speed = 1.0
 			self.Type = UnitType.ENEMY
 
-			#self.Clone = Asteroids.RockClone(self)
-			self.Clones = []
-			
-			cpy = self.rect.copy()
-			cpy.centerx -= vars.ScreenSize[0]
-			cpy.centery -= vars.ScreenSize[1]
-			self.Clones.append(cpy)
-			
-			cpy = self.rect.copy()
-			cpy.centerx -= vars.ScreenSize[0]
-			cpy.centery += vars.ScreenSize[1]
-			self.Clones.append(cpy)
-			
-			cpy = self.rect.copy()
-			cpy.centerx += vars.ScreenSize[0]
-			cpy.centery -= vars.ScreenSize[1]
-			self.Clones.append(cpy)
-			
-			cpy = self.rect.copy()
-			cpy.centerx += vars.ScreenSize[0]
-			cpy.centery += vars.ScreenSize[1]
-			self.Clones.append(cpy)
-			
-			self.horizontal = vars.ScreenSize[0] / 2
-			self.vertical = vars.ScreenSize[1] / 2
+			self.Clone = self.rect.copy()
 			
 			self.calculate_path()
-			Debug("Spawning asteroid at " + str((startX, startY)))
-			Debug("Vector: " + str((self.StepX, self.StepY)) + "(" + str(angle) + ") Speed: " + str(self.Speed) + " Step: " + str((self.StepX, self.StepY)))
 
 		def update(self):
 			vars = Vars()
-			#Projectiles.Projectile.update(self, True)
 			self.cx += self.StepX
 			self.cy += self.StepY
 			
 			self.rect.centerx = self.cx
 			self.rect.centery = self.cy
-			
-			self.Clones[0].centerx = self.cx - vars.ScreenSize[0]
-			self.Clones[0].centery = self.cy - vars.ScreenSize[1]
-			
-			self.Clones[1].centerx = self.cx - vars.ScreenSize[0]
-			self.Clones[1].centery = self.cy + vars.ScreenSize[1]
-			
-			self.Clones[2].centerx = self.cx + vars.ScreenSize[0]
-			self.Clones[2].centery = self.cy - vars.ScreenSize[1]
-			
-			self.Clones[3].centerx = self.cx + vars.ScreenSize[0]
-			self.Clones[3].centery = self.cy + vars.ScreenSize[1]
-			
-			hud = HeadsUpDisplay.HUD()
-			hud.set_text(HeadsUpDisplay.Locations.TOPLEFT, str((self.cx, self.cy)))
 			
 			if self.cy <= 0:
 				self.cy = vars.ScreenSize[1]
@@ -128,31 +61,34 @@ class Asteroids(Level.LevelBase):
 			elif self.cx >= vars.ScreenSize[0]:
 				self.cx = 1
 			
-			#self.Clone.update()
-			
 			dist_from_center_x = ((vars.ScreenSize[0] / 2) - self.cx) * -1
 			dist_from_center_y = ((vars.ScreenSize[1] / 2) - self.cy) * -1
-			hud.set_text(HeadsUpDisplay.Locations.TOPCENTER, str((math.floor(dist_from_center_x), math.floor(dist_from_center_y))))
-			
-			"""if self.cx >= self.horizontal:
-				self.Clone.rect.centerx = 0.0 - (vars.ScreenSize[0] / 2) - self.cx
-			elif self.cx < self.horizontal:
-				self.Clone.rect.centerx = self.cx + vars.ScreenSize[0]
-			
-			if self.cy >= self.vertical:
-				self.Clone.rect.centery = 0.0 - (vars.ScreenSize[1] / 2) - self.cy
-			elif self.cy < self.vertical:
-				self.Clone.rect.centery = self.cy + vars.ScreenSize[1]"""
-			
+
+			dist_from_top = self.cy
+			dist_from_left = self.cx
+			dist_from_bottom = vars.ScreenSize[1] - self.cy
+			dist_from_right = vars.ScreenSize[0] - self.cx
+
+			if dist_from_top < dist_from_left and dist_from_top < dist_from_right and dist_from_top < dist_from_bottom:
+				# Closest to top
+				self.Clone.centerx = self.cx
+				self.Clone.centery = self.cy + vars.ScreenSize[1]
+			elif dist_from_bottom < dist_from_left and dist_from_bottom < dist_from_right:
+				# Closest to bottom
+				self.Clone.centerx = self.cx
+				self.Clone.centery = self.cy - vars.ScreenSize[1]
+			elif dist_from_left < dist_from_right:
+				# Closest to left
+				self.Clone.centerx = self.cx + vars.ScreenSize[0]
+				self.Clone.centery = self.cy
+			else:
+				# Closest to right
+				self.Clone.centerx = self.cx - vars.ScreenSize[0]
+				self.Clone.centery = self.cy
+
 		def draw(self, screen):
-			#self.Clone.draw_rect(screen)
 			screen.blit(self.image, self.rect)
-			#self.Clone.draw(screen)
-			vars = Vars()
-			for c in self.Clones:
-				screen.blit(self.image, c)
-				pygame.draw.line(screen, self.linecolor, (c.centerx, c.centery), (vars.ScreenSize[0] / 2, vars.ScreenSize[1] / 2))
-				
+			screen.blit(self.image, self.Clone)
 
 		def check_bounds(self):
 			return False
@@ -160,7 +96,7 @@ class Asteroids(Level.LevelBase):
 	def __init__(self):
 		Level.LevelBase.__init__(self, 'Asteroids')
 		self.Asteroids = pygame.sprite.Group()
-		for i in range(0, 1):
+		for i in range(0, 4):
 			self.Asteroids.add(Asteroids.BigRock())
 
 		self.Background = TileImage('png/Backgrounds/black.png')
@@ -170,7 +106,6 @@ class Asteroids(Level.LevelBase):
 	
 	def draw(self, screen):
 		screen.blit(self.Background, (0,0))
-		#self.Asteroids.draw(screen)
 		for a in self.Asteroids:
 			a.draw(screen)
 	
