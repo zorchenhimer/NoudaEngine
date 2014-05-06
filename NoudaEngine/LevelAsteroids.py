@@ -48,21 +48,19 @@ class Asteroids(Level.LevelBase):
 			self.cx += self.StepX
 			self.cy += self.StepY
 			
+			
+			if self.cy < 0:
+				self.cy = vars.ScreenSize[1]
+			elif self.cy > vars.ScreenSize[1]:
+				self.cy = 0
+
+			if self.cx < 0:
+				self.cx = vars.ScreenSize[0]
+			elif self.cx > vars.ScreenSize[0]:
+				self.cx = 0
+				
 			self.rect.centerx = self.cx
 			self.rect.centery = self.cy
-			
-			if self.cy <= 0:
-				self.cy = vars.ScreenSize[1]
-			elif self.cy >= vars.ScreenSize[1]:
-				self.cy = 1
-
-			if self.cx <= 0:
-				self.cx = vars.ScreenSize[0]
-			elif self.cx >= vars.ScreenSize[0]:
-				self.cx = 1
-			
-			dist_from_center_x = ((vars.ScreenSize[0] / 2) - self.cx) * -1
-			dist_from_center_y = ((vars.ScreenSize[1] / 2) - self.cy) * -1
 
 			dist_from_top = self.cy
 			dist_from_left = self.cx
@@ -87,8 +85,8 @@ class Asteroids(Level.LevelBase):
 				self.Clone.centery = self.cy
 
 		def draw(self, screen):
-			screen.blit(self.image, self.rect)
 			screen.blit(self.image, self.Clone)
+			screen.blit(self.image, self.rect)
 
 		def check_bounds(self):
 			return False
@@ -106,7 +104,7 @@ class Asteroids(Level.LevelBase):
 	
 	def start_level(self):
 		self.Started = True
-		for i in range(0, 4):
+		for i in range(0, 5):
 			self.Asteroids.add(Asteroids.BigRock())
 	
 	def update(self):
