@@ -134,6 +134,9 @@ class SimpleMenu(MenuBase):
 		
 		if self.GameBackground is not None:
 			surface.blit(self.GameBackground, (0, 0))
+		else:
+			self.Background.set_alpha(255)
+			
 		surface.blit(self.Background, (0, 0))
 		
 		if self.Title is not None:
