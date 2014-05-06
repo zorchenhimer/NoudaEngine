@@ -62,8 +62,8 @@ class LevelControl():
 		self.show_main_menu()
 	
 	def show_level_menu(self):
-		Debug("")
 		self.LevelState = LevelState.MENU
+		self.LevelMenu.reset()
 		vars = Globals.Vars()
 		vars.CurrentHandler = self.LevelMenu.KeyHandle
 		vars.CurrentHandler_js = self.LevelMenu.JoyHandle
@@ -85,6 +85,7 @@ class LevelControl():
 	
 	def show_main_menu(self):
 		self.LevelState = LevelState.MAINMENU
+		self.MainMenu.reset()
 		vars = Globals.Vars()
 		vars.CurrentHandler = self.MainMenu.KeyHandle
 		vars.CurrentHandler_js = self.MainMenu.JoyHandle
@@ -172,6 +173,7 @@ class DefaultLevel(LevelBase):
 		self.Enemies.empty()
 		self.Projectiles.empty()
 		self.Player.reset()
+		self.init_controls()
 	
 	def init_controls(self):
 		self.KeyHandle.clear_all()

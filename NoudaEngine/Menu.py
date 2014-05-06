@@ -57,6 +57,8 @@ class MenuBase():
 		#self.vars.CurrentHandler_js = self.JoyHandle
 		#self.vars.CurrentHandler = self.KeyHandle
 
+	def reset(self):
+		raise NotImplementedError
 
 	def DoSelect(self):
 		raise NotImplementedError
@@ -105,6 +107,12 @@ class SimpleMenu(MenuBase):
 		self.Title = None
 
 		self.set_background(Globals.TileImage('png/Backgrounds/blue.png'))
+	
+	def reset(self):
+		if len(self.MenuItems) > 0:
+			self.CurrentSelection = 0
+		else:
+			self.CurrentSelection = -1
 	
 	def set_background(self, screen):
 		self.GameBackground = screen
