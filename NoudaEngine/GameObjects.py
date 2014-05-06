@@ -39,6 +39,14 @@ class Vehicle(pygame.sprite.Sprite):
 		
 		self.FireRate = 5
 	
+	def reset(self):
+		self.Projectiles.empty()
+		self.firing = False
+		self.movingLeft = False
+		self.movingRight = False
+		self.movingUp = False
+		self.movingDown = False
+	
 	def update(self):
 		## Fire a bullet if it's time	
 		if self.nextFire > 0:
@@ -106,7 +114,12 @@ class Player(Vehicle):
 		self.rect.centerx = self.vars.Bounds.centerx
 		self.firing = False
 		self.movementSpeed = 9
-
+	
+	def reset(self):
+		Vehicle.reset(self)
+		self.rect.centery = self.vars.Bounds.bottom - self.rect.height
+		self.rect.centerx = self.vars.Bounds.centerx
+	
 	def ToggleFire(self, Firing=False):
 		self.firing = Firing
 	

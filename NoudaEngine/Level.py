@@ -26,6 +26,9 @@ class LevelBase():
 		self.JoyHandle = EventHandler.JoyHandler(str(self.LevelID))
 		self.Background = None
 	
+	def reset(self):
+		raise NotImplementedError
+	
 	def init_controls(self):
 		raise NotImplementedError
 	
@@ -96,6 +99,7 @@ class LevelControl():
 				self.CurrentLevel = l
 				vars.CurrentHandler = l.KeyHandle
 				vars.CurrentHandler_js = l.JoyHandle
+				self.CurrentLevel.reset()
 				self.CurrentLevel.init_controls()
 				self.CurrentLevel.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_level_menu)
 				self.LevelState = LevelState.GAME
@@ -148,8 +152,6 @@ class LevelControl():
 class DefaultLevel(LevelBase):
 	def __init__(self):
 		LevelBase.__init__(self, 'Default Level')
-		#self.KeyHandle = EventHandler.KeyHandler("Default Level Handle")
-		#self.JoyHandle = EventHandler.JoyHandler("Default Level Joy Handle")
 
 		## Actual level stuff now
 		self.NextSpawn = 0
@@ -158,22 +160,16 @@ class DefaultLevel(LevelBase):
 		self.Projectiles = pygame.sprite.Group()
 		
 		## Load the background and pre-calculate its dimensions
-		"""vars = Globals.Vars()
-		background = Globals.LoadImage('png/Backgrounds/purple.png')
-		self.Background = pygame.Surface(vars.ScreenSize)
-		widthRepeat = int(math.ceil(self.Background.get_width() / background.get_width()))
-		heightRepeat = int(math.ceil(self.Background.get_height() / background.get_height()))
-		
-		## Tile the background image to fill the screen.
-		(bgwidth, bgheight) = background.get_size()
-		for h in range(0, heightRepeat + 1):
-			for w in range(0, widthRepeat + 1):
-				self.Background.blit(background, (w * bgwidth, h * bgheight))"""
 		self.Background = Globals.TileImage('png/Backgrounds/purple.png')
 		
 		self.rand = random.Random()
 		self.init_controls()
-
+	
+	def reset(self):
+		self.Enemies.empty()
+		self.Projectiles.empty()
+		self.Player.reset()
+	
 	def init_controls(self):
 		self.KeyHandle.clear_all()
 		self.KeyHandle.add_keyhold_handle(pygame.K_SPACE, self.Player.ToggleFire)
@@ -182,7 +178,6 @@ class DefaultLevel(LevelBase):
 		self.KeyHandle.add_keyhold_handle(pygame.K_UP, self.Player.MoveUp)
 		self.KeyHandle.add_keyhold_handle(pygame.K_DOWN, self.Player.MoveDown)
 		self.KeyHandle.add_keydown_handle(pygame.K_b, self.Player.FireBomb)
-		#self.KeyHandle.add_keydown_handle(pygame.K_a, self.JoyHandle.dump_hats)
 		
 		self.JoyHandle.clear_all()
 		self.JoyHandle.add_joyhold_handle('hatposx', self.Player.MoveRight)

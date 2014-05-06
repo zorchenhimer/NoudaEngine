@@ -96,12 +96,22 @@ class Asteroids(Level.LevelBase):
 	def __init__(self):
 		Level.LevelBase.__init__(self, 'Asteroids')
 		self.Asteroids = pygame.sprite.Group()
-		for i in range(0, 4):
-			self.Asteroids.add(Asteroids.BigRock())
+		self.Started = False
 
 		self.Background = TileImage('png/Backgrounds/black.png')
 	
+	def reset(self):
+		self.Asteroids.empty()
+		self.Started = False
+	
+	def start_level(self):
+		self.Started = True
+		for i in range(0, 4):
+			self.Asteroids.add(Asteroids.BigRock())
+	
 	def update(self):
+		if self.Started is False:
+			self.start_level()
 		self.Asteroids.update()
 	
 	def draw(self, screen):
