@@ -30,7 +30,7 @@ class Projectile(pygame.sprite.Sprite):
 		## Distance the projectile travels per tick, given the angle above.
 		self.StepX = self.Speed * math.cos(self.Radian)
 		self.StepY = self.Speed * math.sin(self.Radian)
-		Debug(">> Radian: " + str(self.Radian) + "\nStep: " + str((self.StepX, self.StepY)))
+		#Debug(">> Radian: " + str(self.Radian) + "\nStep: " + str((self.StepX, self.StepY)))
 	
 	def update(self, nobounds=False):
 		## This will despawn the projectile once it leaves play.

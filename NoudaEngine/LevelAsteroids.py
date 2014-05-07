@@ -12,23 +12,56 @@ from Globals import LoadImage, Vars, UnitType, TileImage
 from Logger import Debug
 
 class Asteroids(Level.LevelBase):
-	class BigRock(Projectiles.Projectile):
+	class RockSizes():
+		BIG = 3
+		MED = 2
+		SMALL = 1
+		TINY = 0
+		
+	class Rock(Projectiles.Projectile):
 		"""
 			Biggest Rock.
 			TODO: make a base rock class.
 		"""
-		def __init__(self):
+		def __init__(self, stX=None, stY=None, sAngle=None, rocksize=None):
+			Projectiles.Projectile.__init__(self, sAngle)
 			imagepathprefix = "png/Meteors/"
-			imagelist = [ "meteorBrown_big1.png" , "meteorBrown_big2.png", "meteorBrown_big3.png", "meteorBrown_big4.png" ]
 			r = random.Random()
 			
-			vars = Vars()
-			startX = r.randint(vars.Bounds.left + 20, vars.Bounds.right - 20)
-			startY = r.randint(vars.Bounds.top + 20, vars.Bounds.bottom - 20)
-			angle = r.randint(0, 360)
+			self.Children = pygame.sprite.Group()
+			self.RockSize = rocksize
+			self.Exploded = False
 			
-			Projectiles.Projectile.__init__(self, angle)
-			self.image = LoadImage(imagepathprefix + r.choice(imagelist))
+			if self.RockSize is None:
+				self.RockSize = Asteroids.RockSizes.BIG
+			
+			imglist = None
+			if self.RockSize is Asteroids.RockSizes.BIG:
+				imglist = [ "meteorBrown_big1.png", "meteorBrown_big2.png", "meteorBrown_big3.png", "meteorBrown_big4.png" ]
+			elif self.RockSize is Asteroids.RockSizes.MED:
+				imglist = [ "meteorBrown_med1.png", "meteorBrown_med3.png" ]
+			elif self.RockSize is Asteroids.RockSizes.SMALL:
+				imglist = [ "meteorBrown_small1.png", "meteorBrown_small2.png" ]
+			elif self.RockSize is Asteroids.RockSizes.TINY:
+				imglist = [ "meteorBrown_tiny1.png", "meteorBrown_tiny2.png" ]
+			else:
+				imglist = [ "meteorGrey_tiny1.png", "meteorGrey_tiny2.png" ]
+			
+			vars = Vars()
+			if stX is None:
+				startX = r.randint(vars.Bounds.left + 20, vars.Bounds.right - 20)
+			else:
+				startX = stX
+			
+			if stY is None:
+				startY = r.randint(vars.Bounds.top + 20, vars.Bounds.bottom - 20)
+			else:
+				startY = stY
+			
+			if sAngle is None:
+				self.Degrees = r.randint(0, 360)
+			
+			self.image = LoadImage(str(imagepathprefix) + str(r.choice(imglist)))
 			self.rect = self.image.get_rect()
 			self.rect.x = startX
 			self.rect.y = startY
@@ -42,8 +75,27 @@ class Asteroids(Level.LevelBase):
 			self.Clone = self.rect.copy()
 			
 			self.calculate_path()
-
+		
+		def explode(self):
+			if self.RockSize > Asteroids.RockSizes.TINY:
+				if self.Exploded is False:
+					for i in range(0, 4):
+						srock = Asteroids.Rock(self.cx, self.cy, self.Degrees + (i * 90), self.RockSize - 1)
+						srock.Speed += 1.0
+						srock.calculate_path()
+						self.Children.add(srock)
+					self.Exploded = True
+				else:
+					for a in self.Children:
+						a.explode()
+			else:
+				self.kill()
+		
 		def update(self):
+			if self.Exploded is True:
+				self.Children.update()
+				return
+				
 			vars = Vars()
 			self.cx += self.StepX
 			self.cy += self.StepY
@@ -85,12 +137,16 @@ class Asteroids(Level.LevelBase):
 				self.Clone.centery = self.cy
 
 		def draw(self, screen):
-			screen.blit(self.image, self.Clone)
-			screen.blit(self.image, self.rect)
+			if self.Exploded is True:
+				for a in self.Children:
+					a.draw(screen)
+			else:
+				screen.blit(self.image, self.Clone)
+				screen.blit(self.image, self.rect)
 
 		def check_bounds(self):
 			return False
-			
+
 	def __init__(self):
 		Level.LevelBase.__init__(self, 'Asteroids')
 		self.Asteroids = pygame.sprite.Group()
@@ -105,7 +161,7 @@ class Asteroids(Level.LevelBase):
 	def start_level(self):
 		self.Started = True
 		for i in range(0, 5):
-			self.Asteroids.add(Asteroids.BigRock())
+			self.Asteroids.add(Asteroids.Rock())
 	
 	def update(self):
 		if self.Started is False:
@@ -117,5 +173,9 @@ class Asteroids(Level.LevelBase):
 		for a in self.Asteroids:
 			a.draw(screen)
 	
+	def explode_all_the_things(self):
+		for a in self.Asteroids:
+			a.explode()
+	
 	def init_controls(self):
-		pass
+		self.KeyHandle.add_keydown_handle(pygame.K_SPACE, self.explode_all_the_things)
