@@ -49,6 +49,7 @@ class Projectile(pygame.sprite.Sprite):
 		if self.Type == UnitType.ENEMY:
 			bounds = vars.ScreenSize
 		
+		# TODO: Move this somewhere else.
 		if self.Life > -1:
 			if self.Life == 0:
 				return False
@@ -86,6 +87,12 @@ class Bullet(Projectile):
 		self.rect.y = y
 		
 		self.calculate_path()
+	
+	def update(self):
+		if not self.check_bounds():
+			self.kill()
+		else:
+			Projectile.update(self)
 
 class BulletBomb(Bullet):
 	def __init__(self, t, x, y, group, d=0, l=90):
