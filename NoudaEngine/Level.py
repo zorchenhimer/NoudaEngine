@@ -224,6 +224,8 @@ class DefaultLevel(LevelBase):
 
 	def draw(self, screen):
 		screen.blit(self.Background, (0,0))
-		self.Enemies.draw(screen)
+		#self.Enemies.draw(screen)
+		for e in self.Enemies:
+			e.draw(screen)
 		self.Player.draw(screen)
 		self.Projectiles.draw(screen)

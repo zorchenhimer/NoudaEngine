@@ -67,7 +67,7 @@ class Vars():
 	## Actual class here.
 	class _vars:
 		def __init__(self):
-			self.Bounds = None
+			self.__Bounds = None
 			self.Paused = False
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
@@ -82,7 +82,18 @@ class Vars():
 			self.__ScreenSize = (0, 0)
 			
 			Info("Global.Vars() has been initialized.")
-
+		
+		@property
+		def Bounds(self):
+			return self.__Bounds
+		
+		@Bounds.setter
+		def Bounds(self, val):
+			if isinstance(val, pygame.Rect):
+				self.__Bounds = val
+			else:
+				raise AttributeError("Bounds is not a Rect!")
+		
 		@property
 		def LevelControl(self):
 			return self.__LevelControl

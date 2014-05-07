@@ -32,31 +32,20 @@ class Projectile(pygame.sprite.Sprite):
 		self.StepY = self.Speed * math.sin(self.Radian)
 		#Debug(">> Radian: " + str(self.Radian) + "\nStep: " + str((self.StepX, self.StepY)))
 	
-	def update(self, nobounds=False):
-		## This will despawn the projectile once it leaves play.
-		"""if not nobounds:
-			if not self.check_bounds():
-				self.kill()"""
-		
+	def update(self, nobounds=False):		
 		## Move the projectile keeping in mind the direction.
 		self.rect.x += self.StepX
 		self.rect.y += self.StepY
 		
+		if self.Life > -1:
+			if self.Life == 0:
+				self.kill()
+			else:
+				self.Life -= 1
 	
 	def check_bounds(self):
 		vars = Globals.Vars()
-		bounds = vars.Bounds
-		if self.Type == UnitType.ENEMY:
-			bounds = vars.ScreenSize
-		
-		# TODO: Move this somewhere else.
-		if self.Life > -1:
-			if self.Life == 0:
-				return False
-			else:
-				self.Life -= 1
-		
-		if bounds.contains(self.rect):
+		if vars.Bounds.contains(self.rect):
 			return True
 		return False
 
@@ -81,10 +70,11 @@ class Bullet(Projectile):
 			self.Speed = 15
 		else:
 			self.image = pygame.transform.rotate(Globals.LoadImage('png/Lasers/laserRed02.png'), (self.Degrees * -1))
+			self.Speed = 15
 		
 		self.rect = self.image.get_rect()
-		self.rect.x = x
-		self.rect.y = y
+		self.rect.centerx = x
+		self.rect.centery = y
 		
 		self.calculate_path()
 	

@@ -73,9 +73,9 @@ class Vehicle(pygame.sprite.Sprite):
 		
 	def FireBullet(self):
 		if self.type == UnitType.ENEMY:
-			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, None, 40))
-			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 135, 30))
-			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery, 225, 30))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery + 20, 180, 40))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery + 20, 135, 30))
+			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.centery + 20, 225, 30))
 		else:
 			self.Projectiles.add(Bullet(self.type, self.rect.centerx, self.rect.top - 30))
 		
@@ -143,7 +143,7 @@ class Player(Vehicle):
 class Enemy(Vehicle):
 	def __init__(self):
 		Vehicle.__init__(self)
-		self.firing = False
+		self.firing = True
 		self.path = None
 	
 	def set_path(self, path):

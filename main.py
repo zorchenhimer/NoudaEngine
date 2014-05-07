@@ -41,7 +41,7 @@ class GameEngine():
 		self.hud = NoudaEngine.HeadsUpDisplay.HUD(self.screen.get_size())
 		Debug(str(self.screen.get_size()))
 		
-		self.vars.Bounds = self.screen.get_rect() #bounds
+		self.vars.Bounds = self.screen.get_rect()
 		self.vars.ScreenSize = self.screen.get_size()
 		self.vars.LevelControl = NoudaEngine.Level.LevelControl()
 
