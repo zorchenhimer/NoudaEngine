@@ -30,10 +30,19 @@ class GameEngine():
 		self.vars = NoudaEngine.Globals.Vars()
 		self.width, self.height = [w, h]
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
+		
+		pygame.display.set_caption('NoudaEngine')
 		self.screen = pygame.display.set_mode((self.width, self.height))#, pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
 		Debug("Creating screen with dimensions " + str((w, h)))
 		pygame.init()
 		pygame.joystick.init()
+		
+		icosurf = pygame.Surface((33,26))
+		icokey = pygame.Color(0,0,0)
+		icosurf.fill(icokey)
+		icosurf.blit(NoudaEngine.Globals.LoadImage('png/UI/playerLife1_red.png'), (0,0))
+		icosurf.set_colorkey(icokey)
+		pygame.display.set_icon(icosurf)
 		
 		self.tps = cap
 		Debug("Ticks per second cap: " + str(self.tps))

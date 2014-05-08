@@ -48,13 +48,13 @@ class KeyHandler():
 	def do_keydown(self, key):
 		""" Execute a key down event's callback. """
 		if key in self.keydown_assignments:
-			Debug("Keydown for " + str(key))
+#			Debug("Keydown for " + str(key))
 			if self.keydown_assignments[key]['args'] != None:
 				self.keydown_assignments[key]['callback'](self.keydown_assignments[key]['args'])
 			else:
 				self.keydown_assignments[key]['callback']()
-		else:
-			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keydown: " + str(key))
+#		else:
+#			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keydown: " + str(key))
 	
 	def do_keyup(self, key):
 		""" Execute a key up event's callback. """
