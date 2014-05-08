@@ -30,12 +30,6 @@ def LoadImage(path):
 		print("Unable to load image at path '" + path + "': " + str(exc))
 	return surf
 
-def GTFO():
-	""" FUCK THIS SHIT """
-	print "FUCK THIS SHIT"
-	pygame.quit()
-	exit()
-
 def FixPath(p):
 	""" Return the correct path format depending on the current system. """
 	if platform.system().lower() == 'windows':
@@ -67,14 +61,8 @@ class Vars():
 	## Actual class here.
 	class _vars:
 		def __init__(self):
-			self.__Bounds = None
-			self.Paused = False
 			self.Running = True
 			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
-
-			self.__MainMenu = None
-			self.__UpperState = GameState.MENU
-			self.__LevelControl = None
 			
 			## Input handlers
 			self.__CurrentHandler = None
@@ -83,64 +71,7 @@ class Vars():
 			
 			Info("Global.Vars() has been initialized.")
 		
-		@property
-		def Bounds(self):
-			return self.__Bounds
-		
-		@Bounds.setter
-		def Bounds(self, val):
-			if isinstance(val, pygame.Rect):
-				self.__Bounds = val
-			else:
-				raise AttributeError("Bounds is not a Rect!")
-		
-		@property
-		def LevelControl(self):
-			return self.__LevelControl
-
-		@LevelControl.setter
-		def LevelControl(self, var):
-			if self.__LevelControl is not None:
-				raise AttributeError("LevelControl is already assigned!")
-			else:
-				self.__LevelControl = var
-
-		@property
-		def MainMenu(self):
-			return self.__MainMenu
-		
-		@MainMenu.setter
-		def MainMenu(self, var):
-			if isinstance(var, Menu.MenuBase):
-				self.__MainMenu = var
-			else:
-				raise TypeError("MainMenu is an invalid type!")
-	
-		@property
-		def UpperState(self):
-			return self.__UpperState
-		
-		@UpperState.setter
-		def UpperState(self, var):
-			if type(var) is not int:
-				raise TypeError("Invalid type for UpperState!")
-			else:
-				if var > 0 and var < 4:
-					self.__UpperState = var
-				else:
-					raise IndexError("UpperState value out of range!")
-	
-		@property
-		def CurrentLevel(self):
-			return self.__CurrentLevel
-
-		@CurrentLevel.setter
-		def CurrentLevel(self, var):
-			if isinstance(var, LevelBase):
-				self.__CurrentLevel = var
-			else:
-				raise TypeError("CurrentLevel is an invalid instance!")
-
+		## TODO: Make everything that calls this use pygame.display.get_surface() instead
 		@property
 		def ScreenSize(self):
 			return self.__ScreenSize
