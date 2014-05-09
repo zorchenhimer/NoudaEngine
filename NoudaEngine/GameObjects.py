@@ -5,7 +5,7 @@
 import math
 import pygame
 import Globals
-from Globals import GTFO, UnitType
+from Globals import UnitType
 from Pathing import MovementPath
 from Projectiles import Bullet, BulletBomb
 from Logger import *

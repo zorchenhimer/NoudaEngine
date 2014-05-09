@@ -3,7 +3,7 @@
 import math
 import random
 import Globals
-from Globals import GTFO, UnitType
+from Globals import UnitType
 from Logger import *
 
 class MovementPath():
