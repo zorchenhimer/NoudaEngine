@@ -261,11 +261,10 @@ class Asteroids(Level.LevelBase):
 				self.rotrect = self.imagerot.get_rect()
 				self.rotrect.center = self.rect.center
 				self.rect = self.rotrect
+				self.Clone = self.rect.copy()
 			
 			if self.Thrusting != 0:
 				self.Velocity = (self.Velocity[0] + self.Speed * math.cos(radian), self.Velocity[1] + self.Speed * math.sin(radian))
-			
-			#hud.set_text(HeadsUpDisplay.Locations.TOPLEFT, str(self.Velocity) + "\n" + str((self.Speed, self.Thrust)) + "\n" + str((self.Rotating, self.Thrusting)) + "\n" + str(self.Rotation))
 			
 			self.cx += self.Velocity[0]
 			self.cy += self.Velocity[1]
@@ -280,7 +279,7 @@ class Asteroids(Level.LevelBase):
 				self.cx = vars.ScreenSize[0]
 			elif self.cx > vars.ScreenSize[0]:
 				self.cx = 0
-
+			
 			dist_from_top = self.cy
 			dist_from_left = self.cx
 			dist_from_bottom = vars.ScreenSize[1] - self.cy
@@ -304,7 +303,7 @@ class Asteroids(Level.LevelBase):
 				self.Clone.centery = self.cy
 			
 			self.rect.center = (self.cx, self.cy)
-			
+
 			if self.NextFire > 0:
 				self.NextFire -= 1
 			
@@ -316,8 +315,6 @@ class Asteroids(Level.LevelBase):
 			self.Projectiles.update()
 			
 		def draw(self, screen):
-			#hud = HeadsUpDisplay.HUD()
-			#hud.set_text(HeadsUpDisplay.Locations.BOTTOMLEFT, str(self.rect))
 			screen.blit(self.imagerot, self.rect)
 			screen.blit(self.imagerot, self.Clone)
 			for p in self.Projectiles:
