@@ -14,6 +14,7 @@ import NoudaEngine.Menu
 import NoudaEngine.Level
 import NoudaEngine.Pathing
 import NoudaEngine.Logger
+import NoudaEngine.Screenshot
 
 import NoudaEngine.LevelAsteroids
 
@@ -59,6 +60,8 @@ class GameEngine():
 		
 		Info("Init finished.")
 		
+		self.ss = NoudaEngine.Screenshot.Screenshot()
+		
 		self.start_game()
 		
 	def start_game(self):
@@ -75,8 +78,7 @@ class GameEngine():
 					break
 				if event.type == pygame.KEYDOWN:
 					if event.key is pygame.K_F12 or event.key is pygame.K_s:
-						pygame.image.save(self.screen, 'screenshot.png')
-						Info('Screenshot saved.')
+						self.ss.TakeShot(self.screen)
 					if event.key is pygame.K_z:
 						Debug("CurrentHandler: " + self.vars.CurrentHandler.Name + " [" + str(self.vars.CurrentHandler.randID) + "]")
 					self.vars.CurrentHandler.do_keydown(event.key)
