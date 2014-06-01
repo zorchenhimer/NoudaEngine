@@ -66,10 +66,10 @@ class Bullet(Projectile):
 		
 		## Load the correct image.
 		if self.Type == UnitType.PLAYER:
-			self.image = pygame.transform.rotate(Globals.LoadImage('png/Lasers/laserGreen02.png'), (self.Degrees * -1))
+			self.image = pygame.transform.rotozoom(Globals.LoadImage('png/Lasers/laserGreen02.png'), (self.Degrees * -1), 1)
 			self.Speed = 15
 		else:
-			self.image = pygame.transform.rotate(Globals.LoadImage('png/Lasers/laserRed02.png'), (self.Degrees * -1))
+			self.image = pygame.transform.rotozoom(Globals.LoadImage('png/Lasers/laserRed02.png'), (self.Degrees * -1), 1)
 			self.Speed = 15
 		
 		self.rect = self.image.get_rect()
