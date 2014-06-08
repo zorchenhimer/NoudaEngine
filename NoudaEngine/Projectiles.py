@@ -8,12 +8,13 @@ import Effects
 
 class Projectile(pygame.sprite.Sprite):
 	""" All projectiles will inherit this class for a basic projectile. """
-	def __init__(self, d=None, l=-1):
+	def __init__(self, d=None, l=-1, offset=0):
 		pygame.sprite.Sprite.__init__(self)
 		self.Degrees = d
 		self.Speed = 6		# Movement per tick
 		self.Life = l		## Anything higher than -1 will determine how many 
 							## ticks the projectile is alive.
+		self.Offset = offset	# Number of ticks to skip when calculating the start position.
 		
 		self.image = None
 		self.rect = None
@@ -30,9 +31,18 @@ class Projectile(pygame.sprite.Sprite):
 		## Distance the projectile travels per tick, given the angle above.
 		self.StepX = self.Speed * math.cos(self.Radian)
 		self.StepY = self.Speed * math.sin(self.Radian)
-		#Debug(">> Radian: " + str(self.Radian) + "\nStep: " + str((self.StepX, self.StepY)))
-	
-	def update(self, nobounds=False):		
+		
+		while self.Offset > 0:
+			self.rect.x += self.StepX
+			self.rect.y += self.StepY
+			self.Offset -= 1
+		
+		while self.Offset < 0:
+			self.rect.x -= self.StepX
+			self.rect.y -= self.StepY
+			self.Offset += 1
+
+	def update(self, nobounds=False):
 		## Move the projectile keeping in mind the direction.
 		self.rect.x += self.StepX
 		self.rect.y += self.StepY
@@ -50,8 +60,8 @@ class Projectile(pygame.sprite.Sprite):
 		return False
 
 class Bullet(Projectile):
-	def __init__(self, t, x, y, d=None, l=-1):
-		Projectile.__init__(self, d, l)
+	def __init__(self, t, x, y, d=None, l=-1, offset=0):
+		Projectile.__init__(self, d, l, offset)
 		
 		self.Type = t
 		

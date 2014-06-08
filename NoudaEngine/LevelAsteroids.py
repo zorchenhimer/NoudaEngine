@@ -162,7 +162,7 @@ class Asteroids(Level.LevelBase):
 	
 	class WrappingBullet(Projectiles.Bullet):
 		def __init__(self, t, x, y, d=None, l=-1):
-			Projectiles.Bullet.__init__(self, t, x, y, d, l)
+			Projectiles.Bullet.__init__(self, t, x, y, d, l, 3)
 			self.Clone = self.rect.copy()
 			
 		def check_bounds(self):
