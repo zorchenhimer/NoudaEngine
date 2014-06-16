@@ -43,9 +43,8 @@ def TileImage(surf):
 		surface tiled in both directions.
 	"""
 
-	vars = Vars()
 	if isinstance(surf, pygame.Surface):
-		newsurf = pygame.Surface(vars.ScreenSize)
+		newsurf = pygame.Surface(pygame.display.get_surface().get_size())
 		widthRepeat = int(math.ceil(newsurf.get_width() / surf.get_width()))
 		heightRepeat = int(math.ceil(newsurf.get_height() / surf.get_height()))
 		
@@ -71,21 +70,6 @@ class Vars():
 			
 			Info("Global.Vars() has been initialized.")
 		
-		## TODO: Make everything that calls this use pygame.display.get_surface() instead
-		@property
-		def ScreenSize(self):
-			return self.__ScreenSize
-
-		@ScreenSize.setter
-		def ScreenSize(self, var):
-			## Return value from pygame.Surface.get_size()
-#			if len(var) == 4:
-				self.__ScreenSize = var
-#			elif len(var) == 2:
-#				self.__ScreenSize = var
-#			else:
-#				raise AttributeError("ScreenSize is invalid format. Received: " + str(var))
-
 		@property
 		def CurrentHandler(self):
 			return self.__CurrentHandler
