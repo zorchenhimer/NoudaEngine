@@ -67,7 +67,7 @@ class LevelControl():
 		vars = Globals.Vars()
 		vars.CurrentHandler = self.LevelMenu.KeyHandle
 		vars.CurrentHandler_js = self.LevelMenu.JoyHandle
-		bg = pygame.Surface(vars.ScreenSize)
+		bg = pygame.Surface(pygame.display.get_surface().get_size())
 		self.CurrentLevel.draw(bg)
 		self.LevelMenu.set_background(bg)
 	
@@ -193,10 +193,8 @@ class DefaultLevel(LevelBase):
 		self.JoyHandle.add_joydown_handle(2, self.Player.FireBomb)
 	
 	def update(self):
-		vars = Globals.Vars()
-			
 		if self.NextSpawn <= 0:
-			x = self.rand.randint(vars.Bounds.left, vars.Bounds.right)
+			x = self.rand.randint(pygame.display.get_surface().get_rect().left, pygame.display.get_surface().get_rect().right)
 			y = 0
 
 			mirror = False

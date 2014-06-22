@@ -110,15 +110,15 @@ class Vehicle(pygame.sprite.Sprite):
 class Player(Vehicle):
 	def __init__(self):
 		Vehicle.__init__(self, UnitType.PLAYER)
-		self.rect.centery = self.vars.Bounds.bottom - self.rect.height
-		self.rect.centerx = self.vars.Bounds.centerx
+		self.rect.centery = pygame.display.get_surface().get_rect().bottom - self.rect.height
+		self.rect.centerx = pygame.display.get_surface().get_rect().centerx
 		self.firing = False
 		self.movementSpeed = 9
 	
 	def reset(self):
 		Vehicle.reset(self)
-		self.rect.centery = self.vars.Bounds.bottom - self.rect.height
-		self.rect.centerx = self.vars.Bounds.centerx
+		self.rect.centery = pygame.display.get_surface().get_rect().bottom - self.rect.height
+		self.rect.centerx = pygame.display.get_surface().get_rect().centerx
 	
 	def ToggleFire(self, Firing=False):
 		self.firing = Firing
@@ -128,14 +128,14 @@ class Player(Vehicle):
 		
 	def update(self):
 		## Keep the vehicle in bounds.
-		if self.rect.left < self.vars.Bounds.left:
+		if self.rect.left < pygame.display.get_surface().get_rect().left:
 			self.movingLeft = False
-		if self.rect.right > self.vars.Bounds.right:
+		if self.rect.right > pygame.display.get_surface().get_rect().right:
 			self.movingRight = False
 			
-		if self.rect.top < self.vars.Bounds.top:
+		if self.rect.top < pygame.display.get_surface().get_rect().top:
 			self.movingUp = False
-		if self.rect.bottom > self.vars.Bounds.bottom:
+		if self.rect.bottom > pygame.display.get_surface().get_rect().bottom:
 			self.movingDown = False
 		
 		Vehicle.update(self)

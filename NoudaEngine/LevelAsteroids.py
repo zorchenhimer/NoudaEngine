@@ -20,13 +20,20 @@ class Asteroids(Level.LevelBase):
 		MED = 2
 		SMALL = 1
 		TINY = 0
+	
+	class WrappingObject():
+		def __init__(self):
+			pass
+		
+		def update(self):
+			pass
 		
 	class Rock(Projectiles.Projectile):
 		"""
 			Rock.
 			TODO: make a base rock class.
 		"""
-		def __init__(self, stX=None, stY=None, sAngle=None, rocksize=None):
+		def __init__(self, stX=None, stY=None, sAngle=None, rocksize=3):
 			Projectiles.Projectile.__init__(self, sAngle)
 			imagepathprefix = "png/Meteors/"
 			r = random.Random()
@@ -34,9 +41,6 @@ class Asteroids(Level.LevelBase):
 			self.Children = pygame.sprite.Group()
 			self.RockSize = rocksize
 			self.Exploded = False
-			
-			if self.RockSize is None:
-				self.RockSize = Asteroids.RockSizes.BIG
 			
 			imglist = None
 			if self.RockSize is Asteroids.RockSizes.BIG:
@@ -52,12 +56,12 @@ class Asteroids(Level.LevelBase):
 			
 			vars = Vars()
 			if stX is None:
-				startX = r.randint(vars.Bounds.left + 20, vars.Bounds.right - 20)
+				startX = r.randint(pygame.display.get_surface().get_rect().left + 20, pygame.display.get_surface().get_rect().right - 20)
 			else:
 				startX = stX
 			
 			if stY is None:
-				startY = r.randint(vars.Bounds.top + 20, vars.Bounds.bottom - 20)
+				startY = r.randint(pygame.display.get_surface().get_rect().top + 20, pygame.display.get_surface().get_rect().bottom - 20)
 			else:
 				startY = stY
 			
@@ -115,13 +119,13 @@ class Asteroids(Level.LevelBase):
 			
 			
 			if self.cy < 0:
-				self.cy = vars.ScreenSize[1]
-			elif self.cy > vars.ScreenSize[1]:
+				self.cy = pygame.display.get_surface().get_size()[1]
+			elif self.cy > pygame.display.get_surface().get_size()[1]:
 				self.cy = 0
 
 			if self.cx < 0:
-				self.cx = vars.ScreenSize[0]
-			elif self.cx > vars.ScreenSize[0]:
+				self.cx = pygame.display.get_surface().get_size()[0]
+			elif self.cx > pygame.display.get_surface().get_size()[0]:
 				self.cx = 0
 				
 			self.rect.centerx = self.cx
@@ -129,24 +133,24 @@ class Asteroids(Level.LevelBase):
 
 			dist_from_top = self.cy
 			dist_from_left = self.cx
-			dist_from_bottom = vars.ScreenSize[1] - self.cy
-			dist_from_right = vars.ScreenSize[0] - self.cx
+			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.cy
+			dist_from_right = pygame.display.get_surface().get_size()[0] - self.cx
 
 			if dist_from_top < dist_from_left and dist_from_top < dist_from_right and dist_from_top < dist_from_bottom:
 				# Closest to top
 				self.Clone.centerx = self.cx
-				self.Clone.centery = self.cy + vars.ScreenSize[1]
+				self.Clone.centery = self.cy + pygame.display.get_surface().get_size()[1]
 			elif dist_from_bottom < dist_from_left and dist_from_bottom < dist_from_right:
 				# Closest to bottom
 				self.Clone.centerx = self.cx
-				self.Clone.centery = self.cy - vars.ScreenSize[1]
+				self.Clone.centery = self.cy - pygame.display.get_surface().get_size()[1]
 			elif dist_from_left < dist_from_right:
 				# Closest to left
-				self.Clone.centerx = self.cx + vars.ScreenSize[0]
+				self.Clone.centerx = self.cx + pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.cy
 			else:
 				# Closest to right
-				self.Clone.centerx = self.cx - vars.ScreenSize[0]
+				self.Clone.centerx = self.cx - pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.cy
 
 		def draw(self, screen):
@@ -172,35 +176,35 @@ class Asteroids(Level.LevelBase):
 			Projectiles.Bullet.update(self)
 			vars = Vars()
 			if self.rect.centery < 0:
-				self.rect.centery = vars.ScreenSize[1]
-			elif self.rect.centery > vars.ScreenSize[1]:
+				self.rect.centery = pygame.display.get_surface().get_size()[1]
+			elif self.rect.centery > pygame.display.get_surface().get_size()[1]:
 				self.rect.centery = 0
 
 			if self.rect.centerx < 0:
-				self.rect.centerx = vars.ScreenSize[0]
-			elif self.rect.centerx > vars.ScreenSize[0]:
+				self.rect.centerx = pygame.display.get_surface().get_size()[0]
+			elif self.rect.centerx > pygame.display.get_surface().get_size()[0]:
 				self.rect.centerx = 0
 
 			dist_from_top = self.rect.centery
 			dist_from_left = self.rect.centerx
-			dist_from_bottom = vars.ScreenSize[1] - self.rect.centery
-			dist_from_right = vars.ScreenSize[0] - self.rect.centerx
+			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.rect.centery
+			dist_from_right = pygame.display.get_surface().get_size()[0] - self.rect.centerx
 
 			if dist_from_top < dist_from_left and dist_from_top < dist_from_right and dist_from_top < dist_from_bottom:
 				# Closest to top
 				self.Clone.centerx = self.rect.centerx
-				self.Clone.centery = self.rect.centery + vars.ScreenSize[1]
+				self.Clone.centery = self.rect.centery + pygame.display.get_surface().get_size()[1]
 			elif dist_from_bottom < dist_from_left and dist_from_bottom < dist_from_right:
 				# Closest to bottom
 				self.Clone.centerx = self.rect.centerx
-				self.Clone.centery = self.rect.centery - vars.ScreenSize[1]
+				self.Clone.centery = self.rect.centery - pygame.display.get_surface().get_size()[1]
 			elif dist_from_left < dist_from_right:
 				# Closest to left
-				self.Clone.centerx = self.rect.centerx + vars.ScreenSize[0]
+				self.Clone.centerx = self.rect.centerx + pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.rect.centery
 			else:
 				# Closest to right
-				self.Clone.centerx = self.rect.centerx - vars.ScreenSize[0]
+				self.Clone.centerx = self.rect.centerx - pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.rect.centery
 				
 		
@@ -271,35 +275,35 @@ class Asteroids(Level.LevelBase):
 			
 			vars = Vars()
 			if self.cy < 0:
-				self.cy = vars.ScreenSize[1]
-			elif self.cy > vars.ScreenSize[1]:
+				self.cy = pygame.display.get_surface().get_size()[1]
+			elif self.cy > pygame.display.get_surface().get_size()[1]:
 				self.cy = 0
 
 			if self.cx < 0:
-				self.cx = vars.ScreenSize[0]
-			elif self.cx > vars.ScreenSize[0]:
+				self.cx = pygame.display.get_surface().get_size()[0]
+			elif self.cx > pygame.display.get_surface().get_size()[0]:
 				self.cx = 0
 			
 			dist_from_top = self.cy
 			dist_from_left = self.cx
-			dist_from_bottom = vars.ScreenSize[1] - self.cy
-			dist_from_right = vars.ScreenSize[0] - self.cx
+			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.cy
+			dist_from_right = pygame.display.get_surface().get_size()[0] - self.cx
 
 			if dist_from_top < dist_from_left and dist_from_top < dist_from_right and dist_from_top < dist_from_bottom:
 				# Closest to top
 				self.Clone.centerx = self.cx
-				self.Clone.centery = self.cy + vars.ScreenSize[1]
+				self.Clone.centery = self.cy + pygame.display.get_surface().get_size()[1]
 			elif dist_from_bottom < dist_from_left and dist_from_bottom < dist_from_right:
 				# Closest to bottom
 				self.Clone.centerx = self.cx
-				self.Clone.centery = self.cy - vars.ScreenSize[1]
+				self.Clone.centery = self.cy - pygame.display.get_surface().get_size()[1]
 			elif dist_from_left < dist_from_right:
 				# Closest to left
-				self.Clone.centerx = self.cx + vars.ScreenSize[0]
+				self.Clone.centerx = self.cx + pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.cy
 			else:
 				# Closest to right
-				self.Clone.centerx = self.cx - vars.ScreenSize[0]
+				self.Clone.centerx = self.cx - pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.cy
 			
 			self.rect.center = (self.cx, self.cy)

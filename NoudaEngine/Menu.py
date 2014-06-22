@@ -34,7 +34,7 @@ class MenuBase():
 		self.vars = Globals.Vars()
 		self.Font = pygame.font.Font(self.vars.DefaultFontPath, 25)
 		self.FontColor = (255, 255, 255)
-		self.Background = pygame.Surface(self.vars.ScreenSize)
+		self.Background = pygame.Surface(pygame.display.get_surface().get_size())
 		self.Background.fill((0, 0, 0))
 		self.Dirty = True
 		self._init_controls()
@@ -148,7 +148,7 @@ class SimpleMenu(MenuBase):
 		surface.blit(self.Background, (0, 0))
 		
 		if self.Title is not None:
-			surface.blit(self.Title, ((self.vars.Bounds.centerx - (self.Title.get_width() / 2.0)), 100))
+			surface.blit(self.Title, ((pygame.display.get_surface().get_rect().centerx - (self.Title.get_width() / 2.0)), 100))
 		
 		num = 0
 		for i in self.MenuItems:

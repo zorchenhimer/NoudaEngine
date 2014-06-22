@@ -55,7 +55,7 @@ class Projectile(pygame.sprite.Sprite):
 	
 	def check_bounds(self):
 		vars = Globals.Vars()
-		if vars.Bounds.contains(self.rect):
+		if pygame.display.get_surface().get_rect().contains(self.rect):
 			return True
 		return False
 

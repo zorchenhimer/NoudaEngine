@@ -66,7 +66,6 @@ class Vars():
 			## Input handlers
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
-			self.__ScreenSize = (0, 0)
 			
 			Info("Global.Vars() has been initialized.")
 		
@@ -108,6 +107,8 @@ class Vars():
 		return getattr(self.__instance, attr)
 	
 	def __setattr__(self, attr, value):
+		if attr is "ScreenSize" or attr is "Bounds":
+			raise NotImplementedError
 		return setattr(self.__instance, attr, value)
 		
 #import inspect
