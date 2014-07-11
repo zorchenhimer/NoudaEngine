@@ -19,7 +19,7 @@ class KeyHandler():
 		self.randID = rand.randint(0, 100000)
 		
 		if name is not None:
-			strname = " with name " + str(name)		
+			strname = " with name " + str(name)
 		Debug("Initializing a new KeyHandler()" + strname + " [" + str(self.randID) + "]")
 	
 	def dump_bindings(self):
@@ -48,13 +48,10 @@ class KeyHandler():
 	def do_keydown(self, key):
 		""" Execute a key down event's callback. """
 		if key in self.keydown_assignments:
-#			Debug("Keydown for " + str(key))
 			if self.keydown_assignments[key]['args'] != None:
 				self.keydown_assignments[key]['callback'](self.keydown_assignments[key]['args'])
 			else:
 				self.keydown_assignments[key]['callback']()
-#		else:
-#			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keydown: " + str(key))
 	
 	def do_keyup(self, key):
 		""" Execute a key up event's callback. """
@@ -63,8 +60,6 @@ class KeyHandler():
 				self.keyup_assignments[key]['callback'](self.keyup_assignments[key]['args'])
 			else:
 				self.keyup_assignments[key]['callback']()
-#		else:
-#			Debug("[" + self.Name +"][" + str(self.randID) + "] Unbound keyup: " + str(key))
 	
 	def clear_all(self):
 		""" Reset all events. """
@@ -182,7 +177,7 @@ class JoyHandler():
 			## that case.
 			if self.joystick.get_numhats() > 0:
 				self.hat.update(self.joystick.get_hat(0))
-			
+		
 			## Axes on the other hand...
 			for i in range(len(self.axes)):
 				axis = self.joystick.get_axis(i)
