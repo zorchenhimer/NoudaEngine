@@ -49,13 +49,13 @@ class MenuBase():
 		self.KeyHandle.add_keydown_handle(pygame.K_UP, self.MoveUp)
 		self.KeyHandle.add_keydown_handle(pygame.K_RETURN, self.SelectItem)
 
+		## These are configured for a GameCube controller.  It's all I have right now...
 		self.JoyHandle.clear_all()
 		self.JoyHandle.add_joydown_handle('hatnegy', self.MoveDown)
 		self.JoyHandle.add_joydown_handle('hatposy', self.MoveUp)
-		self.JoyHandle.add_joydown_handle(0, self.SelectItem)
-
-		#self.vars.CurrentHandler_js = self.JoyHandle
-		#self.vars.CurrentHandler = self.KeyHandle
+		self.JoyHandle.add_joydown_handle(1, self.SelectItem)
+		self.JoyHandle.add_joydown_handle('a1pos', self.MoveDown)
+		self.JoyHandle.add_joydown_handle('a1neg', self.MoveUp)
 
 	def reset(self):
 		raise NotImplementedError

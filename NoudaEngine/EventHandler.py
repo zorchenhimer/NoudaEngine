@@ -157,11 +157,12 @@ class JoyHandler():
 					self.__Handler.do_keydown('hatnegy')
 		class MrAxis():
 			""" Manage axis values """
-			def __init__(self, axisid):
+			def __init__(self, axisid, handler):
 				# +/- for each axis
 				self.__Value = 0.0
 				self.__Deadzone = 0.1
 				self.__AxisID = axisid
+				self.__Handler = handler
 
 				# For menu navigation and hat emulation
 				self.__Pos = False
@@ -170,14 +171,34 @@ class JoyHandler():
 			def update(self):
 				self.__Value = pygame.joystick.Joystick(0).get_axis(self.__AxisID)
 				if self.__Value > (0 + self.__Deadzone):
+					if self.__Pos is False:
+						self.__Handler.do_keydown("a" + str(self.__AxisID) + "pos")
+					if self.__Neg is True:
+						self.__Handler.do_keyup("a" + str(self.__AxisID) + "neg")
+
 					self.__Pos = True
 					self.__Neg = False
 				elif self.__Value < (0 - self.__Deadzone):
+					if self.__Pos is True:
+						self.__Handler.do_keyup("a" + str(self.__AxisID) + "pos")
+					if self.__Neg is False:
+						self.__Handler.do_keydown("a" + str(self.__AxisID) + "neg")
+
 					self.__Pos = False
 					self.__Neg = True
 				else:
+					if self.__Pos is True:
+						self.__Handler.do_keyup("a" + str(self.__AxisID) + "pos")
+					if self.__Neg is True:
+						self.__Handler.do_keyup("a" + str(self.__AxisID) + "pos")
 					self.__Pos = False
 					self.__Neg = False
+
+			def dump_states(self):
+				Debug("[" + str(self.__AxisID) + "] " + str(self.__Value))
+				Debug("\tDeadzone: " + str(self.__Deadzone))
+				Debug("\tPos: " + str(self.__Pos))
+				Debug("\tNeg: " + str(self.__Neg))
 
 			def get_hat_value():
 				# heh...
@@ -185,9 +206,10 @@ class JoyHandler():
 
 		class MrStick():
 			""" Manage stick values. """
-			def __init__(self, axisX_id, axisY_id):
-				self.__X = JoyHandler.RealHandler.MrAxis(axisX_id)
-				self.__Y = JoyHandler.RealHandler.MrAxis(axisY_id)
+			def __init__(self, axisX_id, axisY_id, handler):
+				self.__X = JoyHandler.RealHandler.MrAxis(axisX_id, handler)
+				self.__Y = JoyHandler.RealHandler.MrAxis(axisY_id, handler)
+				self.__Handler = handler
 			
 			def get_hat_value():
 				return [self.__X.get_hat_value(), self.__Y.get_hat_value()]
@@ -209,7 +231,7 @@ class JoyHandler():
 			
 			i = 0
 			while i < pygame.joystick.Joystick(0).get_numaxes():
-				self.axes.append(JoyHandler.RealHandler.MrStick(i, i+1))
+				self.axes.append(JoyHandler.RealHandler.MrStick(i, i+1, self.ButtonHandler))
 				i += 2
 
 			if name is not None:
