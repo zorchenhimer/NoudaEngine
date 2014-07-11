@@ -2,7 +2,9 @@
 *.zip
 *.pyc
 *.orig
+*.swp
 Thumbs.db
 png_old/
 SpaceShooterRedux/
 screenshots/*.png
+
