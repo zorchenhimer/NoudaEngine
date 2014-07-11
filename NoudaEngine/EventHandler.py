@@ -155,7 +155,47 @@ class JoyHandler():
 						
 					self.__NegY = True
 					self.__Handler.do_keydown('hatnegy')
-				
+		class MrAxis():
+			""" Manage axis values """
+			def __init__(self, axisid):
+				# +/- for each axis
+				self.__Value = 0.0
+				self.__Deadzone = 0.1
+				self.__AxisID = axisid
+
+				# For menu navigation and hat emulation
+				self.__Pos = False
+				self.__Neg = False
+			
+			def update(self):
+				self.__Value = pygame.joystick.Joystick(0).get_axis(self.__AxisID)
+				if self.__Value > (0 + self.__Deadzone):
+					self.__Pos = True
+					self.__Neg = False
+				elif self.__Value < (0 - self.__Deadzone):
+					self.__Pos = False
+					self.__Neg = True
+				else:
+					self.__Pos = False
+					self.__Neg = False
+
+			def get_hat_value():
+				# heh...
+				return 1 if self.__Pos else -1 if self.__Neg else 0
+
+		class MrStick():
+			""" Manage stick values. """
+			def __init__(self, axisX_id, axisY_id):
+				self.__X = JoyHandler.RealHandler.MrAxis(axisX_id)
+				self.__Y = JoyHandler.RealHandler.MrAxis(axisY_id)
+			
+			def get_hat_value():
+				return [self.__X.get_hat_value(), self.__Y.get_hat_value()]
+
+			def update(self):
+				self.__X.update()
+				self.__Y.update()
+
 		def __init__(self, rID, name=None):
 			self.ButtonHandler = KeyHandler(str(name) + " [auto]")
 			
@@ -167,6 +207,11 @@ class JoyHandler():
 			strname = ""
 			self.randID = rID
 			
+			i = 0
+			while i < pygame.joystick.Joystick(0).get_numaxes():
+				self.axes.append(JoyHandler.RealHandler.MrStick(i, i+1))
+				i += 2
+
 			if name is not None:
 				strname = " with name " + str(name)
 			Debug("Initializing a new JoyHandler()" + strname + " [" + str(self.randID) + "]")
@@ -179,10 +224,9 @@ class JoyHandler():
 				self.hat.update(self.joystick.get_hat(0))
 		
 			## Axes on the other hand...
-			for i in range(len(self.axes)):
-				axis = self.joystick.get_axis(i)
-				self.axes[i] = axis
-		
+			for a in self.axes:
+				a.update()
+
 		def dump_hats(self):
 			if self.joystick.get_numhats() > 0:
 				h = self.joystick.get_hat(0)
@@ -190,12 +234,6 @@ class JoyHandler():
 		
 		def get_hat_value(self, hat):
 			return self.hat
-		
-		## FIXME: make this better with error checking/catching.
-		def get_axis_value(self, axis):
-			if len(self.axes) == 0 or len(self.axis) - 1 < axis or axis < 0:
-				return 0
-			return self.axes[axis]
 		
 		## Because why write shit twice?
 		def dump_bindings(self):
