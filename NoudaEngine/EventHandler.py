@@ -160,7 +160,7 @@ class JoyHandler():
 			def __init__(self, axisid, handler):
 				# +/- for each axis
 				self.__Value = 0.0
-				self.__Deadzone = 0.1
+				self.__Deadzone = 0.2
 				self.__AxisID = axisid
 				self.__Handler = handler
 
@@ -190,7 +190,7 @@ class JoyHandler():
 					if self.__Pos is True:
 						self.__Handler.do_keyup("a" + str(self.__AxisID) + "pos")
 					if self.__Neg is True:
-						self.__Handler.do_keyup("a" + str(self.__AxisID) + "pos")
+						self.__Handler.do_keyup("a" + str(self.__AxisID) + "neg")
 					self.__Pos = False
 					self.__Neg = False
 
@@ -271,12 +271,10 @@ class JoyHandler():
 		
 		def add_joydown_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
-				#Debug("[" + self.Name + "] Adding joydown for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keydown_handle(button, callback, args)
 		
 		def add_joyup_handle(self, button, callback, args=None, joy=0):
 			if joy == self.joystick.get_id():
-				#Debug("[" + self.Name + "] Adding joyup for " + str(button) + " with callback " + str(callback))
 				self.ButtonHandler.add_keyup_handle(button, callback, args)
 		
 		def add_joyhold_handle(self, button, callback, joy=0):

@@ -106,6 +106,7 @@ class LevelControl():
 				self.CurrentLevel.reset()
 				self.CurrentLevel.init_controls()
 				self.CurrentLevel.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_level_menu)
+				self.CurrentLevel.JoyHandle.add_joydown_handle(9, self.show_level_menu)
 				self.LevelState = LevelState.GAME
 	
 	def preload_level(self, levelObj):

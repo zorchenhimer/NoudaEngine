@@ -221,7 +221,7 @@ class Asteroids(Level.LevelBase):
 			self.image = LoadImage('png/playerShip1_green.png')
 			disprect = pygame.display.get_surface().get_rect()
 			
-			self.TurnSpeed = 2
+			self.TurnSpeed = 3
 			self.Rotation = 0
 			self.Thrust = 0.02		# pixels per tick per tick
 			self.Speed = 0.0
@@ -326,7 +326,6 @@ class Asteroids(Level.LevelBase):
 		
 		def MoveForward(self, on=False):
 			if on:
-				Debug("Moving Forward")
 				self.Thrusting += 1
 			else:
 				self.Thrusting -= 1
@@ -396,3 +395,9 @@ class Asteroids(Level.LevelBase):
 		self.KeyHandle.add_keyhold_handle(pygame.K_UP, self.Player.MoveForward)
 		self.KeyHandle.add_keyhold_handle(pygame.K_LEFT, self.Player.TurnLeft)
 		self.KeyHandle.add_keyhold_handle(pygame.K_RIGHT, self.Player.TurnRight)
+
+		self.JoyHandle.add_joyhold_handle('a1neg', self.Player.MoveForward)
+		self.JoyHandle.add_joyhold_handle('a0pos', self.Player.TurnRight)
+		self.JoyHandle.add_joyhold_handle('a0neg', self.Player.TurnLeft)
+		self.JoyHandle.add_joyhold_handle(1, self.Player.Fire)
+
