@@ -5,6 +5,7 @@
 import pygame
 import platform
 import os.path as path
+import os
 import math
 from Logger import Debug, Warn, Info
 
@@ -32,6 +33,8 @@ def LoadImage(path):
 
 def FixPath(p):
 	""" Return the correct path format depending on the current system. """
+	vars = Vars()
+	p = vars.RootPath + "/" + p
 	if platform.system().lower() == 'windows':
 		return path.abspath(p.replace('/', '\\'))
 	else:
@@ -61,14 +64,29 @@ class Vars():
 	class _vars:
 		def __init__(self):
 			self.Running = True
-			self.DefaultFontPath = "NoudaEngine/Fonts/profont.ttf"
 			
 			## Input handlers
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
-			
+			self.__RootPath = path.dirname(__file__).replace('/NoudaEngine/NoudaEngine', '/NoudaEngine')
+			self.__DefaultFontPath = self.__RootPath + "/NoudaEngine/Fonts/profont.ttf"
+			Info( "path: " + self.__RootPath)
 			Info("Global.Vars() has been initialized.")
 		
+		@property
+		def DefaultFontPath(self):
+			return self.__DefaultFontPath
+
+		@property
+		def RootPath(self):
+			return self.__RootPath
+		
+		@RootPath.setter
+		def RootPath(self, var):
+			## TODO: Error checking
+			self.__RootPath = var + "/"
+			Debug("RootPath is now " + str(self.__RootPath))
+
 		@property
 		def CurrentHandler(self):
 			return self.__CurrentHandler
