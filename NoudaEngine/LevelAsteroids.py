@@ -29,10 +29,6 @@ class Asteroids(Level.LevelBase):
 			pass
 		
 	class Rock(Projectiles.Projectile):
-		"""
-			Rock.
-			TODO: make a base rock class.
-		"""
 		def __init__(self, stX=None, stY=None, sAngle=None, rocksize=3):
 			Projectiles.Projectile.__init__(self, sAngle)
 			imagepathprefix = "png/Meteors/"
@@ -41,6 +37,7 @@ class Asteroids(Level.LevelBase):
 			self.Children = pygame.sprite.Group()
 			self.RockSize = rocksize
 			self.Exploded = False
+			self.Collided = False
 			
 			imglist = None
 			if self.RockSize is Asteroids.RockSizes.BIG:
@@ -70,6 +67,7 @@ class Asteroids(Level.LevelBase):
 			
 			self.image = LoadImage(str(imagepathprefix) + str(r.choice(imglist)))
 			self.rect = self.image.get_rect()
+			self.mask = pygame.mask.from_surface(self.image)
 			self.rect.x = startX
 			self.rect.y = startY
 			
@@ -108,7 +106,18 @@ class Asteroids(Level.LevelBase):
 			else:
 				self.kill()
 		
+		## FIXME: do an angular change instead of just inverting the speed.  It looks
+		##        really weird just reversing  when rocks graze eachother.
+		def do_collide(self):
+			if self.Collided is False:
+				self.Speed *= -1
+				self.calculate_path()
+				self.Collided = True
+				Debug("Collided with something!")
+
 		def update(self):
+			if self.Collided is True:
+				self.Collided = False
 			if self.Exploded is True:
 				self.Children.update()
 				return
@@ -131,6 +140,7 @@ class Asteroids(Level.LevelBase):
 			self.rect.centerx = self.cx
 			self.rect.centery = self.cy
 
+			## Draw the rock on the oposite edge of the screen
 			dist_from_top = self.cy
 			dist_from_left = self.cx
 			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.cy
@@ -152,7 +162,7 @@ class Asteroids(Level.LevelBase):
 				# Closest to right
 				self.Clone.centerx = self.cx - pygame.display.get_surface().get_size()[0]
 				self.Clone.centery = self.cy
-
+				
 		def draw(self, screen):
 			if self.Exploded is True:
 				for a in self.Children:
@@ -185,6 +195,7 @@ class Asteroids(Level.LevelBase):
 			elif self.rect.centerx > pygame.display.get_surface().get_size()[0]:
 				self.rect.centerx = 0
 
+			## Draw the bullet on the oposite edge
 			dist_from_top = self.rect.centery
 			dist_from_left = self.rect.centerx
 			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.rect.centery
@@ -242,7 +253,6 @@ class Asteroids(Level.LevelBase):
 			self.Clone = self.rect.copy()
 		
 		def update(self):
-			#hud = HeadsUpDisplay.HUD()
 			if self.Thrusting > 0 and self.Speed < 0.05:
 				self.Speed += self.Thrust
 			elif self.Thrusting < 0:
@@ -283,7 +293,8 @@ class Asteroids(Level.LevelBase):
 				self.cx = pygame.display.get_surface().get_size()[0]
 			elif self.cx > pygame.display.get_surface().get_size()[0]:
 				self.cx = 0
-			
+
+			## Draw a cloned ship on the oposite edge of the screen
 			dist_from_top = self.cy
 			dist_from_left = self.cx
 			dist_from_bottom = pygame.display.get_surface().get_size()[1] - self.cy
@@ -376,9 +387,27 @@ class Asteroids(Level.LevelBase):
 		for r in self.Asteroids:
 			allrocks.add(r.get_sprites())
 		
-		collisions = pygame.sprite.groupcollide(allrocks, self.Player.Projectiles, False, True)
-		for c in collisions:
+		bullet_collisions = pygame.sprite.groupcollide(allrocks, self.Player.Projectiles, False, True)
+		for c in bullet_collisions:
 			c.explode()
+
+		"""for rock in allrocks:
+			crocks = pygame.sprite.spritecollide(rock, allrocks, False)
+			for cr in crocks:
+				if cr != rock:
+					cr.do_collide()
+			if len(crocks) == 1:
+				rock.Collided = False"""
+
+		## FIXME: This breaks when rocks explode.
+		for rock in allrocks:
+			for other_rock in allrocks:
+				if rock != other_rock:
+					if pygame.sprite.collide_mask(rock, other_rock) is not None:
+						rock.do_collide()
+						other_rock.do_collide()
+
+
 	
 	def draw(self, screen):
 		screen.blit(self.Background, (0,0))
