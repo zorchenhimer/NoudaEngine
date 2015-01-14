@@ -8,7 +8,7 @@ import Level
 import GameObjects
 import Projectiles
 import HeadsUpDisplay
-from Globals import LoadImage, Vars, UnitType, TileImage
+from Globals import LoadImage, Vars, UnitType, TileImage, DebugPause
 from Logger import Debug
 
 def get_linear(tuple):
@@ -68,8 +68,8 @@ class Asteroids(Level.LevelBase):
 			self.image = LoadImage(str(imagepathprefix) + str(r.choice(imglist)))
 			self.rect = self.image.get_rect()
 			self.mask = pygame.mask.from_surface(self.image)
-			self.rect.x = startX
-			self.rect.y = startY
+			self.rect.centerx = startX
+			self.rect.centery = startY
 			
 			self.cx = self.rect.centerx * 1.0
 			self.cy = self.rect.centery * 1.0
@@ -376,6 +376,8 @@ class Asteroids(Level.LevelBase):
 		self.Started = True
 		for i in range(0, 5):
 			self.Asteroids.add(Asteroids.Rock())
+		#self.Asteroids.add(Asteroids.Rock(300, 300, 90))
+		#self.Asteroids.add(Asteroids.Rock(600, 250, 270))
 	
 	def update(self):
 		if self.Started is False:
@@ -399,15 +401,46 @@ class Asteroids(Level.LevelBase):
 			if len(crocks) == 1:
 				rock.Collided = False"""
 
-		## FIXME: This breaks when rocks explode.
+		## FIXME: This doesn't work at all.  Keeps inverting the vectors after the first collision.  Calculated vectors are probably wrong too...
 		for rock in allrocks:
 			for other_rock in allrocks:
-				if rock != other_rock:
-					if pygame.sprite.collide_mask(rock, other_rock) is not None:
-						rock.do_collide()
-						other_rock.do_collide()
-
-
+				if rock != other_rock and pygame.sprite.collide_mask(rock, other_rock) is not None:
+					Debug('== Collision ==')
+					if rock.Collided is False:
+						rock.Collided = True
+						other_rock.Collided = True
+						
+						## Find the triangle.
+						Ax = rock.cx
+						Ay = rock.cy
+						Bx = other_rock.cx
+						By = other_rock.cy
+						Cx = Ax
+						Cy = By
+						
+						## Get the Angles of said triangle.
+						B_deg = abs(math.degrees(math.atan((Ay - By)/(Ax - Bx))))
+						A_deg = 90 - B_deg
+						
+						## Add the angles to the oposite rock.
+						rock.Degrees += B_deg
+						other_rock.Degrees += A_deg
+						
+						## Re-calculate rock vectors.
+						rock.Offset = 5
+						other_rock.Offset = 5
+						rock.calculate_path()
+						other_rock.calculate_path()
+						
+						Debug(".rock ({ax}, {ay})".format(ax=Ax, ay=Ay))
+						Debug(".other_rock ({bx}, {by})".format(bx=Bx, by=By))
+						Debug("..Point C ({cx}, {cy})".format(cy=Cy, cx=Cx))
+						Debug("..A_deg: {deg}".format(deg=A_deg))
+						Debug("..B_deg: {deg}".format(deg=B_deg))
+					else:
+						Debug('~~ Resetting collison bool ~~')
+						rock.Collided = False
+						other_rock.Collided = False
 	
 	def draw(self, screen):
 		screen.blit(self.Background, (0,0))

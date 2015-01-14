@@ -41,6 +41,8 @@ class Projectile(pygame.sprite.Sprite):
 			self.rect.x -= self.StepX
 			self.rect.y -= self.StepY
 			self.Offset += 1
+		
+		Debug('Recalculated vector: ({x}, {y})'.format(x=self.StepX, y=self.StepY))
 
 	def update(self, nobounds=False):
 		## Move the projectile keeping in mind the direction.
