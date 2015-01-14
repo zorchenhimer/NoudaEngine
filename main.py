@@ -29,6 +29,8 @@ class GameEngine():
 		SetLogLevel(LogLevel.DEBUG)
 		Info("Starting init...")
 		self.vars = NoudaEngine.Globals.Vars()
+		self.vars.RootPath = 'D:\code\python\NoudaEngine'
+		Debug('Root Path: {p}'.format(p=self.vars.RootPath))
 		self.width, self.height = [w, h]
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
 		

@@ -58,7 +58,7 @@ def TileImage(surf):
 	else:
 		return TileImage(LoadImage(surf))
 	return newsurf
-
+	
 class Vars():
 	## Actual class here.
 	class _vars:
@@ -69,7 +69,7 @@ class Vars():
 			self.__CurrentHandler = None
 			self.__CurrentHandler_js = None
 			self.__RootPath = path.dirname(__file__).replace('/NoudaEngine/NoudaEngine', '/NoudaEngine')
-			self.__DefaultFontPath = self.__RootPath + "/NoudaEngine/Fonts/profont.ttf"
+			self.__DefaultFontPath = self.__RootPath + "/Fonts/profont.ttf"
 			Info( "path: " + self.__RootPath)
 			Info("Global.Vars() has been initialized.")
 		
