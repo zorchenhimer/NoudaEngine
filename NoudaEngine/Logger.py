@@ -5,6 +5,7 @@
 """
 
 #from Globals import FixPath
+import time
 
 __all__ = ["Debug", "Info", "Warn", "LogLevel", "SetLogLevel", "SetPrintLevel"]
 
@@ -40,6 +41,8 @@ class Logger():
 			if type(message) is not str:
 				raise TypeError('message in WriteToLog is not a string! Found instead: ' + str(type(message)))
 			
+			t = '[{n}]'.format(n=time.time())
+			
 			prefix = '[WARN]'
 			if level == LogLevel.INFO:
 				prefix = '[INFO]'
@@ -47,11 +50,11 @@ class Logger():
 				prefix = '[DEBUG]'
 				
 			if self.__print_level >= level:
-				print prefix + ' ' + message
+				print t + prefix + ' ' + message
 		
 			if self.__log_level >= level:
 				f = open(self.__log_file, 'a')
-				f.write(prefix + ' ' + message + "\n")
+				f.write(t + prefix + ' ' + message + "\n")
 				f.close()
 			
 		def SetLogLevel(self, level):
