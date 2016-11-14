@@ -4,17 +4,17 @@ import pygame
 import random
 import copy
 import math
-import Level
-import GameObjects
-import Projectiles
-import HeadsUpDisplay
-from Globals import LoadImage, Vars, UnitType, TileImage, DebugPause
-from Logger import Debug
+from lib.Level import LevelBase
+import lib.GameObjects
+from lib.Projectiles import Projectile, Bullet
+import lib.HeadsUpDisplay
+from lib.Globals import LoadImage, Vars, UnitType, TileImage
+from lib.Logger import Debug
 
 def get_linear(tuple):
     return math.sqrt(tuple[0]**2 + tuple[1]**2)
 
-class Asteroids(Level.LevelBase):
+class Asteroids(LevelBase):
     class RockSizes():
         BIG = 3
         MED = 2
@@ -28,9 +28,9 @@ class Asteroids(Level.LevelBase):
         def update(self):
             pass
         
-    class Rock(Projectiles.Projectile):
+    class Rock(Projectile):
         def __init__(self, stX=None, stY=None, sAngle=None, rocksize=3):
-            Projectiles.Projectile.__init__(self, sAngle)
+            Projectile.__init__(self, sAngle)
             imagepathprefix = "png/Meteors/"
             r = random.Random()
             
@@ -174,16 +174,16 @@ class Asteroids(Level.LevelBase):
         def check_bounds(self):
             return False
     
-    class WrappingBullet(Projectiles.Bullet):
+    class WrappingBullet(Bullet):
         def __init__(self, t, x, y, d=None, l=-1):
-            Projectiles.Bullet.__init__(self, t, x, y, d, l, 3)
+            Bullet.__init__(self, t, x, y, d, l, 3)
             self.Clone = self.rect.copy()
             
         def check_bounds(self):
             return True
         
         def update(self):
-            Projectiles.Bullet.update(self)
+            Bullet.update(self)
             vars = Vars()
             if self.rect.centery < 0:
                 self.rect.centery = pygame.display.get_surface().get_size()[1]
@@ -360,7 +360,7 @@ class Asteroids(Level.LevelBase):
             self.Firing = on
     
     def __init__(self):
-        Level.LevelBase.__init__(self, 'Asteroids')
+        LevelBase.__init__(self, 'Asteroids')
         self.Asteroids = pygame.sprite.Group()
         self.Started = False
 

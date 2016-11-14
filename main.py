@@ -6,20 +6,20 @@ import time
 import math
 import random
 
-import NoudaEngine.EventHandler
-import NoudaEngine.Globals
-import NoudaEngine.GameObjects
-import NoudaEngine.HeadsUpDisplay
-import NoudaEngine.Menu
-import NoudaEngine.Level
-import NoudaEngine.Pathing
-import NoudaEngine.Logger
-import NoudaEngine.Screenshot
+import lib.EventHandler
+import lib.Globals
+import lib.GameObjects
+import lib.HeadsUpDisplay
+import lib.Menu
+import lib.Level
+import lib.Pathing
+import lib.Logger
+import lib.Screenshot
 
-import NoudaEngine.LevelAsteroids
+import lib.LevelAsteroids
 
-from NoudaEngine.Logger import *
-from NoudaEngine.Globals import FixPath
+from lib.Logger import *
+from lib.Globals import FixPath
 
 ## FIXME: sticky keys when you enter the menu with a keyhold event active
 
@@ -28,7 +28,7 @@ class GameEngine():
         SetPrintLevel(LogLevel.DEBUG)
         SetLogLevel(LogLevel.DEBUG)
         Info("Starting init...")
-        self.vars = NoudaEngine.Globals.Vars()
+        self.vars = lib.Globals.Vars()
         self.vars.RootPath = 'D:\\code\\python\\NoudaEnvironment\\NoudaEngine'
         Debug('Root Path: {p}'.format(p=self.vars.RootPath))
         self.width, self.height = [w, h]
@@ -43,27 +43,28 @@ class GameEngine():
         icosurf = pygame.Surface((33,26))
         icokey = pygame.Color(0,0,0)
         icosurf.fill(icokey)
-        icosurf.blit(NoudaEngine.Globals.LoadImage('png/UI/playerLife1_red.png'), (0,0))
+        icosurf.blit(lib.Globals.LoadImage('png/UI/playerLife1_red.png'), (0,0))
         icosurf.set_colorkey(icokey)
         pygame.display.set_icon(icosurf)
         
         self.tps = cap
         Debug("Ticks per second cap: " + str(self.tps))
         self.clock = pygame.time.Clock()        ## Might want to move this to Globals.Vars() for physics or frame-independent timing
-        self.hud = NoudaEngine.HeadsUpDisplay.HUD(self.screen.get_size())
+        self.hud = lib.HeadsUpDisplay.HUD()
         Debug(str(self.screen.get_size()))
         
-        self.vars.LevelControl = NoudaEngine.Level.LevelControl()
-        self.vars.LevelControl.preload_level(NoudaEngine.Level.DefaultLevel())
-        self.vars.LevelControl.preload_level(NoudaEngine.LevelAsteroids.Asteroids())
+        self.vars.LevelControl = lib.Level.LevelControl()
+        self.vars.LevelControl.preload_level(lib.Level.DefaultLevel())
+        self.vars.LevelControl.preload_level(lib.LevelAsteroids.Asteroids())
         
         Info("Init finished.")
         
-        self.ss = NoudaEngine.Screenshot.Screenshot()
+        self.ss = lib.Screenshot.Screenshot()
         
         self.start_game()
         
     def start_game(self):
+        Info('Game started.')
         running = True
         
         nextspawn = 0
@@ -99,7 +100,7 @@ class GameEngine():
             ## Draw stuff
             self.vars.LevelControl.draw(self.screen)
 
-            self.hud.set_text(NoudaEngine.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))
+            self.hud.set_text(lib.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))
             
             ## Draw the hud, then update the display.
             self.hud.blit_to_surface(self.screen)

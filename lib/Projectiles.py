@@ -2,9 +2,8 @@
 
 import math
 import pygame
-import Globals
-from Globals import UnitType, Debug
-import Effects
+from lib.Globals import UnitType, Debug, Vars, LoadImage
+import lib.Effects
 
 class Projectile(pygame.sprite.Sprite):
     """ All projectiles will inherit this class for a basic projectile. """
@@ -56,7 +55,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.Life -= 1
     
     def check_bounds(self):
-        vars = Globals.Vars()
+        vars = Vars()
         if pygame.display.get_surface().get_rect().contains(self.rect):
             return True
         return False
@@ -78,10 +77,10 @@ class Bullet(Projectile):
         
         ## Load the correct image.
         if self.Type == UnitType.PLAYER:
-            self.image = pygame.transform.rotozoom(Globals.LoadImage('png/Lasers/laserGreen02.png'), (self.Degrees * -1), 1)
+            self.image = pygame.transform.rotozoom(LoadImage('png/Lasers/laserGreen02.png'), (self.Degrees * -1), 1)
             self.Speed = 15
         else:
-            self.image = pygame.transform.rotozoom(Globals.LoadImage('png/Lasers/laserRed02.png'), (self.Degrees * -1), 1)
+            self.image = pygame.transform.rotozoom(LoadImage('png/Lasers/laserRed02.png'), (self.Degrees * -1), 1)
             self.Speed = 15
         
         self.rect = self.image.get_rect()

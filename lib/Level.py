@@ -3,13 +3,13 @@
 import pygame
 import random
 import math
-import GameObjects
-import Globals
-import Pathing
-import EventHandler
-import Effects
-from Menu import *
-from Logger import *
+from lib.GameObjects import Player, Enemy
+from lib.Globals import Vars, FixPath, UnitType, TileImage
+from lib.Pathing import MovementPath
+from lib.EventHandler import JoyHandler, KeyHandler
+import lib.Effects
+from lib.Menu import *
+from lib.Logger import *
 
 
 class LevelState():
@@ -22,8 +22,8 @@ class LevelState():
 class LevelBase():
     def __init__(self, level_id=None):
         self.LevelID = level_id
-        self.KeyHandle = EventHandler.KeyHandler(str(self.LevelID))
-        self.JoyHandle = EventHandler.JoyHandler(str(self.LevelID))
+        self.KeyHandle = KeyHandler(str(self.LevelID))
+        self.JoyHandle = JoyHandler(str(self.LevelID))
         self.Background = None
     
     def reset(self):
@@ -58,13 +58,15 @@ class LevelControl():
         self.GameOverMenu.set_title('Game Over')
         self.GameOverMenu.add_item(1, 'Return to main menu', self.show_main_menu)
         self.GameOverMenu.add_item(2, 'Exit', self.m_exit)
-        
+
+        Info('LevelControl init finished.')
+
         self.show_main_menu()
     
     def show_level_menu(self):
         self.LevelState = LevelState.MENU
         self.LevelMenu.reset()
-        vars = Globals.Vars()
+        vars = Vars()
         vars.CurrentHandler = self.LevelMenu.KeyHandle
         vars.CurrentHandler_js = self.LevelMenu.JoyHandle
         bg = pygame.Surface(pygame.display.get_surface().get_size())
@@ -79,25 +81,25 @@ class LevelControl():
     
     def m_resume(self):
         self.LevelState = LevelState.GAME
-        vars = Globals.Vars()
+        vars = Vars()
         vars.CurrentHandler = self.CurrentLevel.KeyHandle
         vars.CurrentHandler_js = self.CurrentLevel.JoyHandle
     
     def show_main_menu(self):
         self.LevelState = LevelState.MAINMENU
         self.MainMenu.reset()
-        vars = Globals.Vars()
+        vars = Vars()
         vars.CurrentHandler = self.MainMenu.KeyHandle
         vars.CurrentHandler_js = self.MainMenu.JoyHandle
         vars.CurrentHandler.add_keydown_handle(pygame.K_a, self.debug_dump)
     
     def m_exit(self):
-        vars = Globals.Vars()
+        vars = Vars()
         vars.Running = False
     
     def start_level(self, levelid):
         Debug("Attempting to start level '" + str(levelid) + "'")
-        vars = Globals.Vars()
+        vars = Vars()
         for l in self.LoadedLevels:
             if l.LevelID == levelid:
                 self.CurrentLevel = l
@@ -161,11 +163,11 @@ class DefaultLevel(LevelBase):
         ## Actual level stuff now
         self.NextSpawn = 0
         self.Enemies = pygame.sprite.Group()
-        self.Player = GameObjects.Player()
+        self.Player = Player()
         self.Projectiles = pygame.sprite.Group()
         
         ## Load the background and pre-calculate its dimensions
-        self.Background = Globals.TileImage('png/Backgrounds/purple.png')
+        self.Background = TileImage('png/Backgrounds/purple.png')
         
         self.rand = random.Random()
         self.init_controls()
@@ -202,9 +204,9 @@ class DefaultLevel(LevelBase):
             if x % 2 == 0:
                 mirror = True
 
-            e = GameObjects.Enemy()
-            p = Pathing.MovementPath(e)
-            p.load_path(Globals.FixPath('data/CurveDownPath.dat'), (x, y), 2, mirror)
+            e = Enemy()
+            p = MovementPath(e)
+            p.load_path(FixPath('data/CurveDownPath.dat'), (x, y), 2, mirror)
 
             e.set_path(p)
             self.Enemies.add(e)
@@ -219,7 +221,7 @@ class DefaultLevel(LevelBase):
         ## TODO: projectile collision from non-player vehicles
         collisions = pygame.sprite.groupcollide(self.Enemies, self.Player.Projectiles, True, False)
         for sp in collisions:
-            self.Projectiles.add(Effects.Explosion(Globals.UnitType.PLAYER, sp.rect.center))
+            self.Projectiles.add(Effects.Explosion(UnitType.PLAYER, sp.rect.center))
 
     def draw(self, screen):
         screen.blit(self.Background, (0,0))

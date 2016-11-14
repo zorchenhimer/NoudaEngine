@@ -3,8 +3,8 @@
 import pygame
 import time
 import os
-import EventHandler
-from Globals import Info
+import lib.EventHandler
+from lib.Globals import Info
 
 class Screenshot():
     def __init__(self):

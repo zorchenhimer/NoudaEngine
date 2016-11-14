@@ -2,9 +2,8 @@
 
 import math
 import random
-import Globals
-from Globals import UnitType
-from Logger import *
+from lib.Globals import UnitType, FixPath, Vars
+from lib.Logger import *
 
 class MovementPath():
     """
@@ -27,7 +26,7 @@ class MovementPath():
         DANCE = 3
         
     class PathPoint():
-        def __init__(self, (x, y), time):
+        def __init__(self, x, y, time):
             """
                 (x, y) 
                     X and Y position of the waypoint.
@@ -60,7 +59,7 @@ class MovementPath():
         self.StaticCountdown = self.Static
     
     def load_basic_path(self, rand=True):
-        vars = Globals.Vars()
+        vars = Vars()
         startx = vars.ScreenSize.width / 2
         if random:
             startx = random.randint(vars.Bounds.left, vars.Bounds.right)
@@ -71,19 +70,19 @@ class MovementPath():
         self.set_mode(MovementPath.Mode.ENTRANCE)
     
     def dump_paths(self):
-        print 'Entrance'
+        print('Entrance')
         for p in self.Entrance:
-            print p.tostring()
+            print(p.tostring())
         
-        print 'Dance'
+        print('Dance')
         for p in self.Dance:
-            print p.tostring()
+            print(p.tostring())
         
-        print 'Exit'
+        print('Exit')
         for p in self.Exit:
-            print p.tostring()
+            print(p.tostring())
         
-    def add_waypoint(self, mode, (x, y), time):
+    def add_waypoint(self, mode, x, y, time):
         waypoint = MovementPath.PathPoint((x, y), time)
         if mode == MovementPath.Mode.ENTRANCE:
             self.Entrance.append(waypoint)
@@ -104,12 +103,12 @@ class MovementPath():
     def load_path(self, filepath, offset=(0, 0), static=1, mirror=False):
         self.Static = static
         self.StaticCountdown = static
-        filepath = Globals.FixPath(filepath)
+        filepath = FixPath(filepath)
         #Debug("Attempting to load path data from '" + filepath + "'")
         try:
             f = open(filepath, 'r')
-        except IOError, msg:
-            print "Error opening pathfile " + filepath + "\n\t" + str(msg)
+        except IOError as msg:
+            print("Error opening pathfile " + filepath + "\n\t" + str(msg))
             Warn("Unable to open path file '" + filepath + "': " + str(msg))
             return
         

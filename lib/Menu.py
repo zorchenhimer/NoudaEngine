@@ -4,9 +4,9 @@
 
 import pygame
 import math
-import Globals
-import EventHandler
-from Logger import *
+from lib.Globals import Vars, LoadImage, TileImage
+from lib.EventHandler import KeyHandler, JoyHandler
+from lib.Logger import *
 
 __all__ = ["MenuItem", "MenuBase", "SimpleMenu"]
 
@@ -31,7 +31,7 @@ class MenuItem():
 
 class MenuBase():
     def __init__(self):
-        self.vars = Globals.Vars()
+        self.vars = Vars()
         self.Font = pygame.font.Font(self.vars.DefaultFontPath, 25)
         self.FontColor = (255, 255, 255)
         self.Background = pygame.Surface(pygame.display.get_surface().get_size())
@@ -40,8 +40,8 @@ class MenuBase():
         self._init_controls()
     
     def _init_controls(self):
-        self.KeyHandle = EventHandler.KeyHandler("Menu Key Handler")
-        self.JoyHandle = EventHandler.JoyHandler("Menu Joy Handler")
+        self.KeyHandle = KeyHandler("Menu Key Handler")
+        self.JoyHandle = JoyHandler("Menu Joy Handler")
 
         # Shouldn't neet to clear_all(), but w/e
         self.KeyHandle.clear_all()
@@ -102,11 +102,11 @@ class SimpleMenu(MenuBase):
         self.ItemsHeight = 0
         self.ItemPadding = 10
         
-        self.Cursor = pygame.transform.rotate(Globals.LoadImage('png/UI/playerLife1_red.png'), -90)
+        self.Cursor = pygame.transform.rotate(LoadImage('png/UI/playerLife1_red.png'), -90)
         self.CurrentSelection = -1
         self.Title = None
 
-        self.set_background(Globals.TileImage('png/Backgrounds/blue.png'))
+        self.set_background(TileImage('png/Backgrounds/blue.png'))
     
     def reset(self):
         if len(self.MenuItems) > 0:
@@ -186,10 +186,10 @@ class SimpleMenu(MenuBase):
     
     def SelectItem(self):
         if self.CurrentSelection < 0:
-            print "Tried to select a menu item where none exist!"
+            print("Tried to select a menu item where none exist!")
             return
         elif self.CurrentSelection >= len(self.MenuItems):
-            print "Tried to select a menu item past the last item!"
+            print("Tried to select a menu item past the last item!")
             return
         
         self.MenuItems[self.CurrentSelection].do_select()            

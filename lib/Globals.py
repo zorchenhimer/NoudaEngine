@@ -7,7 +7,8 @@ import platform
 import os.path as path
 import os
 import math
-from Logger import Debug, Warn, Info
+from lib.Logger import Debug, Warn, Info
+from lib.EventHandler import JoyHandler, KeyHandler
 
 ## This needs to move to GameObjects
 class UnitType():
@@ -34,6 +35,7 @@ def LoadImage(path):
 def FixPath(p):
     """ Return the correct path format depending on the current system. """
     vars = Vars()
+    Debug('RootPath: {}; p: {}'.format(vars.RootPath, p))
     p = vars.RootPath + "/" + p
     if platform.system().lower() == 'windows':
         return path.abspath(p.replace('/', '\\'))
@@ -93,7 +95,8 @@ class Vars():
         
         @CurrentHandler.setter
         def CurrentHandler(self, handler):
-            if isinstance(handle, EventHandler) and not isinstance(handle, JoyHandler):
+            #if isinstance(handler, EventHandler) and not isinstance(handler, JoyHandler):
+            if isinstance(handler, KeyHandler):
                 #Info("Changing current main handler to " + handler.Name)
                 self.__CurrentHandler = handler
             else:
@@ -105,7 +108,7 @@ class Vars():
             
         @CurrentHandler_js.setter
         def CurrentHandler_js(self, handler):
-            if isinstance(handle, JoyHandler):
+            if isinstance(handler, JoyHandler):
                 #Info("Changing current joy handler to " + handler.Name)
                 self.__CurrentHandler_js = handler
             else:

@@ -4,15 +4,14 @@
 
 import math
 import pygame
-import Globals
-from Globals import UnitType
-from Pathing import MovementPath
-from Projectiles import Bullet, BulletBomb
-from Logger import *
+from lib.Globals import UnitType, Vars, LoadImage
+from lib.Pathing import MovementPath
+from lib.Projectiles import Bullet, BulletBomb
+from lib.Logger import *
 
 class Vehicle(pygame.sprite.Sprite):
     def __init__(self, Type=UnitType.ENEMY):
-        self.vars = Globals.Vars()
+        self.vars = Vars()
         self.type = Type
         self.Projectiles = pygame.sprite.Group()
             
@@ -24,7 +23,7 @@ class Vehicle(pygame.sprite.Sprite):
         else:
             spritePath = 'png/Enemies/enemyGreen1.png'
         
-        self.image = Globals.LoadImage(spritePath)
+        self.image = LoadImage(spritePath)
         self.rect = self.image.get_rect()
         self.firing = False
         self.nextFire = 0    # Ticks until next fire
@@ -100,9 +99,9 @@ class Vehicle(pygame.sprite.Sprite):
 
     def tostring(self):
         typetext = 'Unknown'
-        if self.type == Globals.UnitType.PLAYER:
+        if self.type == UnitType.PLAYER:
             typetext = 'player'
-        elif self.type == Globals.UnitType.ENEMY:
+        elif self.type == UnitType.ENEMY:
             typetext = 'enemy'
         return 'Vehicle type: ' + typetext + ' centered at ' + str(self.rect.center)
         

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import pygame
-import Globals
+import lib.Globals
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, unittype, pos, fuse=10):

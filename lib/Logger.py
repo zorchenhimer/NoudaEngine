@@ -50,7 +50,7 @@ class Logger():
                 prefix = '[DEBUG]'
                 
             if self.__print_level >= level:
-                print t + prefix + ' ' + message
+                print(t + prefix + ' ' + message)
         
             if self.__log_level >= level:
                 f = open(self.__log_file, 'a')
