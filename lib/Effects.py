@@ -8,22 +8,22 @@ class Explosion(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.Fuse = fuse
         self.image = None
-        
+
         if unittype == UnitType.PLAYER:
             self.image = LoadImage('png/Lasers/lasergreenshot.png')
         else:
             self.image = LoadImage('png/Lasers/laserredshot.png')
-        
+
         self.SpriteImage = self.image
         self.rect = self.image.get_rect()
         self.rect.centerx = pos[0]
         self.rect.centery = pos[1]
-        
+
         if self.Fuse > 0:
             self.AlphaStep = 255 / self.Fuse
         else:
             self.AlphaStep = 127
-        
+
     def update(self):
         if self.Fuse > 0:
             self.Fuse -= 1

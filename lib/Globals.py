@@ -52,7 +52,7 @@ def TileImage(surf):
         newsurf = pygame.Surface(pygame.display.get_surface().get_size())
         widthRepeat = int(math.ceil(newsurf.get_width() / surf.get_width()))
         heightRepeat = int(math.ceil(newsurf.get_height() / surf.get_height()))
-        
+
         (surfW, surfH) = surf.get_size()
         for h in range(0, heightRepeat + 1):
             for w in range(0, widthRepeat + 1):
@@ -60,13 +60,13 @@ def TileImage(surf):
     else:
         return TileImage(LoadImage(surf))
     return newsurf
-    
+
 class Vars():
     ## Actual class here.
     class _vars:
         def __init__(self):
             self.Running = True
-            
+
             ## Input handlers
             self.__CurrentHandler = None
             self.__CurrentHandler_js = None
@@ -74,7 +74,7 @@ class Vars():
             self.__DefaultFontPath = self.__RootPath + "/data/profont.ttf"
             Info( "path: " + self.__RootPath)
             Info("Global.Vars() has been initialized.")
-        
+
         @property
         def DefaultFontPath(self):
             return self.__DefaultFontPath
@@ -82,7 +82,7 @@ class Vars():
         @property
         def RootPath(self):
             return self.__RootPath
-        
+
         @RootPath.setter
         def RootPath(self, var):
             ## TODO: Error checking
@@ -92,7 +92,7 @@ class Vars():
         @property
         def CurrentHandler(self):
             return self.__CurrentHandler
-        
+
         @CurrentHandler.setter
         def CurrentHandler(self, handler):
             #if isinstance(handler, EventHandler) and not isinstance(handler, JoyHandler):
@@ -101,11 +101,11 @@ class Vars():
                 self.__CurrentHandler = handler
             else:
                 raise TypeError("CurrentHandler is an invalid type! Found " + str(type(handle)))
-                
+
         @property
         def CurrentHandler_js(self):
             return self.__CurrentHandler_js
-            
+
         @CurrentHandler_js.setter
         def CurrentHandler_js(self, handler):
             if isinstance(handler, JoyHandler):
@@ -113,24 +113,24 @@ class Vars():
                 self.__CurrentHandler_js = handler
             else:
                 raise TypeError("CurrentHandler_js is an invalid type! Found " + str(type(handle)))
-            
-    
+
+
     ## Singleton stuff below.
     __instance = None
-    
+
     def __init__(self):
         if Vars.__instance == None:
             Vars.__instance = Vars._vars()
-        
+
         self.__dict__['_Singleton_instance'] = Vars.__instance
-        
+
     def __getattr__(self, attr):
         return getattr(self.__instance, attr)
-    
+
     def __setattr__(self, attr, value):
         if attr is "ScreenSize" or attr is "Bounds":
             raise NotImplementedError
         return setattr(self.__instance, attr, value)
-        
+
 #import inspect
 #print str(inspect.getframeinfo(inspect.currentframe().f_back))

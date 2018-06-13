@@ -25,16 +25,16 @@ class LevelBase():
         self.KeyHandle = KeyHandler(str(self.LevelID))
         self.JoyHandle = JoyHandler(str(self.LevelID))
         self.Background = None
-    
+
     def reset(self):
         raise NotImplementedError
-    
+
     def init_controls(self):
         raise NotImplementedError
-    
+
     def update(self):
         raise NotImplementedError
-    
+
     def draw(self, screen):
         raise NotImplementedError
 
@@ -44,16 +44,16 @@ class LevelControl():
         self.LoadedLevels = []
         self.CurrentLevel = None
         self.LevelState = None
-        
+
         self.MainMenu = SimpleMenu()
         self.MainMenu.set_title('Main Menu')
         self.MainMenu.add_item(10, 'Exit', self.m_exit)
-        
+
         self.LevelMenu = SimpleMenu()
         self.LevelMenu.set_title('Paused')
         self.LevelMenu.add_item(1, 'Resume', self.m_resume)
         self.LevelMenu.add_item(2, 'Exit to main menu', self.show_main_menu)
-        
+
         self.GameOverMenu = SimpleMenu()
         self.GameOverMenu.set_title('Game Over')
         self.GameOverMenu.add_item(1, 'Return to main menu', self.show_main_menu)
@@ -62,7 +62,7 @@ class LevelControl():
         Info('LevelControl init finished.')
 
         self.show_main_menu()
-    
+
     def show_level_menu(self):
         self.LevelState = LevelState.MENU
         self.LevelMenu.reset()
@@ -72,19 +72,19 @@ class LevelControl():
         bg = pygame.Surface(pygame.display.get_surface().get_size())
         self.CurrentLevel.draw(bg)
         self.LevelMenu.set_background(bg)
-    
+
     def debug_dump(self):
         Debug(" == Dumping loaded levels ==")
         for l in self.LoadedLevels:
             Debug(str(l.LevelID))
         Debug(" == End Dump ==")
-    
+
     def m_resume(self):
         self.LevelState = LevelState.GAME
         vars = Vars()
         vars.CurrentHandler = self.CurrentLevel.KeyHandle
         vars.CurrentHandler_js = self.CurrentLevel.JoyHandle
-    
+
     def show_main_menu(self):
         self.LevelState = LevelState.MAINMENU
         self.MainMenu.reset()
@@ -92,11 +92,11 @@ class LevelControl():
         vars.CurrentHandler = self.MainMenu.KeyHandle
         vars.CurrentHandler_js = self.MainMenu.JoyHandle
         vars.CurrentHandler.add_keydown_handle(pygame.K_a, self.debug_dump)
-    
+
     def m_exit(self):
         vars = Vars()
         vars.Running = False
-    
+
     def start_level(self, levelid):
         Debug("Attempting to start level '" + str(levelid) + "'")
         vars = Vars()
@@ -110,7 +110,7 @@ class LevelControl():
                 self.CurrentLevel.KeyHandle.add_keydown_handle(pygame.K_ESCAPE, self.show_level_menu)
                 self.CurrentLevel.JoyHandle.add_joydown_handle(9, self.show_level_menu)
                 self.LevelState = LevelState.GAME
-    
+
     def preload_level(self, levelObj):
         if isinstance(levelObj, LevelBase):
             self.LoadedLevels.append(levelObj)
@@ -122,19 +122,19 @@ class LevelControl():
     def update(self):
         if self.LevelState is LevelState.MAINMENU:
             self.MainMenu.update()
-        
+
         elif self.LevelState is LevelState.MENU:
             self.LevelMenu.update()
-        
+
         elif self.LevelState is LevelState.GAME:
             if self.CurrentLevel is not None:
                 self.CurrentLevel.update()
             else:
                 raise RuntimeError("CurrentLevel is not set!")
-        
+
         elif self.LevelState is LevelState.GAMEOVER:
             self.GameOverMenu.update()
-    
+
     def draw(self, screen):
         if self.LevelState is LevelState.GAME:
             if self.CurrentLevel is not None:
@@ -143,16 +143,16 @@ class LevelControl():
                 Warn("CurrentLevel is None! returning to the main menu.")
                 self.LevelState = LevelState.MAINMENU
                 self.MainMenu.draw(screen)
-        
+
         elif self.LevelState is LevelState.MENU:
             self.LevelMenu.draw(screen)
-        
+
         elif self.LevelState is LevelState.MAINMENU:
             self.MainMenu.draw(screen)
-            
+
         elif self.LevelState is LevelState.GAMEOVER:
             self.GameOverMenu.draw(screen)
-            
+
         else:
             raise NotImplementedError("Whoops.  From LevelControl.draw().")
 
@@ -165,19 +165,19 @@ class DefaultLevel(LevelBase):
         self.Enemies = pygame.sprite.Group()
         self.Player = Player()
         self.Projectiles = pygame.sprite.Group()
-        
+
         ## Load the background and pre-calculate its dimensions
         self.Background = TileImage('png/Backgrounds/purple.png')
-        
+
         self.rand = random.Random()
         self.init_controls()
-    
+
     def reset(self):
         self.Enemies.empty()
         self.Projectiles.empty()
         self.Player.reset()
         self.init_controls()
-    
+
     def init_controls(self):
         self.KeyHandle.clear_all()
         self.KeyHandle.add_keyhold_handle(pygame.K_SPACE, self.Player.ToggleFire)
@@ -186,7 +186,7 @@ class DefaultLevel(LevelBase):
         self.KeyHandle.add_keyhold_handle(pygame.K_UP, self.Player.MoveUp)
         self.KeyHandle.add_keyhold_handle(pygame.K_DOWN, self.Player.MoveDown)
         self.KeyHandle.add_keydown_handle(pygame.K_b, self.Player.FireBomb)
-        
+
         self.JoyHandle.clear_all()
         self.JoyHandle.add_joyhold_handle('hatposx', self.Player.MoveRight)
         self.JoyHandle.add_joyhold_handle('hatnegx', self.Player.MoveLeft)
@@ -194,7 +194,7 @@ class DefaultLevel(LevelBase):
         self.JoyHandle.add_joyhold_handle('hatnegy', self.Player.MoveDown)
         self.JoyHandle.add_joyhold_handle(0, self.Player.ToggleFire)
         self.JoyHandle.add_joydown_handle(2, self.Player.FireBomb)
-    
+
     def update(self):
         if self.NextSpawn <= 0:
             x = self.rand.randint(pygame.display.get_surface().get_rect().left, pygame.display.get_surface().get_rect().right)
@@ -213,11 +213,11 @@ class DefaultLevel(LevelBase):
             self.NextSpawn = 60
         else:
             self.NextSpawn -= 1
-        
+
         self.Enemies.update()
         self.Player.update()
         self.Projectiles.update()
-        
+
         ## TODO: projectile collision from non-player vehicles
         collisions = pygame.sprite.groupcollide(self.Enemies, self.Player.Projectiles, True, False)
         for sp in collisions:

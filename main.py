@@ -36,44 +36,44 @@ class GameEngine():
         Debug('Root Path: {p}'.format(p=self.vars.RootPath))
         self.width, self.height = [w, h]
         os.environ['SDL_VIDEO_CENTERED'] = '1'
-        
+
         pygame.display.set_caption('NoudaEngine')
         self.screen = pygame.display.set_mode((self.width, self.height))#, pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
         Debug("Creating screen with dimensions " + str((w, h)))
         pygame.init()
         pygame.joystick.init()
-        
+
         icosurf = pygame.Surface((33,26))
         icokey = pygame.Color(0,0,0)
         icosurf.fill(icokey)
         icosurf.blit(lib.Globals.LoadImage('png/UI/playerLife1_red.png'), (0,0))
         icosurf.set_colorkey(icokey)
         pygame.display.set_icon(icosurf)
-        
+
         self.tps = cap
         Debug("Ticks per second cap: " + str(self.tps))
         self.clock = pygame.time.Clock()        ## Might want to move this to Globals.Vars() for physics or frame-independent timing
         self.hud = lib.HeadsUpDisplay.HUD()
         Debug(str(self.screen.get_size()))
-        
+
         self.vars.LevelControl = lib.Level.LevelControl()
         self.vars.LevelControl.preload_level(lib.Level.DefaultLevel())
         self.vars.LevelControl.preload_level(lib.LevelAsteroids.Asteroids())
-        
+
         Info("Init finished.")
-        
+
         self.ss = lib.Screenshot.Screenshot()
-        
+
         self.start_game()
-        
+
     def start_game(self):
         Info('Game started.')
         running = True
-        
+
         nextspawn = 0
         firstloop = True
         rand = random.Random()
-        
+
         while self.vars.Running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -91,20 +91,20 @@ class GameEngine():
                     self.vars.CurrentHandler_js.do_joydown(event.button, event.joy)
                 if event.type == pygame.JOYBUTTONUP:
                     self.vars.CurrentHandler_js.do_joyup(event.button, event.joy)
-            
+
             self.vars.CurrentHandler_js.update()
-            
+
             if self.vars.Running == False:
                 continue
-            
+
             #if self.vars.UpperState == NoudaEngine.Globals.GameState.GAME or firstloop:
             self.vars.LevelControl.update()
-            
+
             ## Draw stuff
             self.vars.LevelControl.draw(self.screen)
 
             self.hud.set_text(lib.HeadsUpDisplay.Locations.TOPRIGHT, str(math.floor(self.clock.get_fps())))
-            
+
             ## Draw the hud, then update the display.
             self.hud.blit_to_surface(self.screen)
             pygame.display.flip()
@@ -114,7 +114,7 @@ class GameEngine():
             pygame.joystick.quit()
             pygame.quit()
             exit()
-    
+
 if __name__ == "__main__":
     game = GameEngine(1360, 768)
     game.start_game()
