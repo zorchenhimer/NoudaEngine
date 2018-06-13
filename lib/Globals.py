@@ -70,8 +70,8 @@ class Vars():
             ## Input handlers
             self.__CurrentHandler = None
             self.__CurrentHandler_js = None
-            self.__RootPath = path.dirname(__file__).replace('/NoudaEngine/NoudaEngine', '/NoudaEngine')
-            self.__DefaultFontPath = self.__RootPath + "/Fonts/profont.ttf"
+            self.__RootPath = path.dirname(__file__).replace('\\', '/').replace('/NoudaEngine/lib', '/NoudaEngine')
+            self.__DefaultFontPath = self.__RootPath + "/data/profont.ttf"
             Info( "path: " + self.__RootPath)
             Info("Global.Vars() has been initialized.")
         

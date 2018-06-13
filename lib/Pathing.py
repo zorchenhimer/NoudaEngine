@@ -83,7 +83,7 @@ class MovementPath():
             print(p.tostring())
         
     def add_waypoint(self, mode, x, y, time):
-        waypoint = MovementPath.PathPoint((x, y), time)
+        waypoint = MovementPath.PathPoint(x, y, time)
         if mode == MovementPath.Mode.ENTRANCE:
             self.Entrance.append(waypoint)
             if self.Static > 1:
@@ -101,10 +101,11 @@ class MovementPath():
         self.CurrentMode = mode
     
     def load_path(self, filepath, offset=(0, 0), static=1, mirror=False):
+        Debug("loading path from file {} using offset {}".format(filepath, offset))
         self.Static = static
         self.StaticCountdown = static
-        filepath = FixPath(filepath)
-        #Debug("Attempting to load path data from '" + filepath + "'")
+        #filepath = FixPath(filepath)
+        Debug("Attempting to load path data from '" + filepath + "'")
         try:
             f = open(filepath, 'r')
         except IOError as msg:
@@ -133,7 +134,7 @@ class MovementPath():
                 else:
                     pass
             elif len(line) == 2 or len(line) == 3:
-                try:
+                #try:
                     (posx, posy, time) = (0, 0, 1)
                     if len(line) == 3:
                         (posx, posy, time) = map(int, line)
@@ -144,11 +145,11 @@ class MovementPath():
                     
                     if mirror is True:
                         posx *= -1
-                    
-                    self.add_waypoint(mode, (posx + offset[0], posy + offset[1]), time)
-                except:
-                    Warn("Line borked in path file!")
-                    pass
+
+                    self.add_waypoint(mode, posx + offset[0], posy + offset[1], time)
+                #except:
+                #    Warn("Line borked in path file! {0!a}".format(line))
+                #    pass
             else: 
                 Info( "ignoring line: " + str(line))
             count += 1

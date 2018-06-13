@@ -7,7 +7,7 @@ from lib.GameObjects import Player, Enemy
 from lib.Globals import Vars, FixPath, UnitType, TileImage
 from lib.Pathing import MovementPath
 from lib.EventHandler import JoyHandler, KeyHandler
-import lib.Effects
+from lib.Effects import Explosion
 from lib.Menu import *
 from lib.Logger import *
 
@@ -221,7 +221,7 @@ class DefaultLevel(LevelBase):
         ## TODO: projectile collision from non-player vehicles
         collisions = pygame.sprite.groupcollide(self.Enemies, self.Player.Projectiles, True, False)
         for sp in collisions:
-            self.Projectiles.add(Effects.Explosion(UnitType.PLAYER, sp.rect.center))
+            self.Projectiles.add(Explosion(UnitType.PLAYER, sp.rect.center))
 
     def draw(self, screen):
         screen.blit(self.Background, (0,0))

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import pygame
-import lib.Globals
+from lib.Globals import LoadImage, UnitType
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, unittype, pos, fuse=10):
@@ -9,10 +9,10 @@ class Explosion(pygame.sprite.Sprite):
         self.Fuse = fuse
         self.image = None
         
-        if unittype == Globals.UnitType.PLAYER:
-            self.image = Globals.LoadImage('png/Lasers/lasergreenshot.png')
+        if unittype == UnitType.PLAYER:
+            self.image = LoadImage('png/Lasers/lasergreenshot.png')
         else:
-            self.image = Globals.LoadImage('png/Lasers/laserredshot.png')
+            self.image = LoadImage('png/Lasers/laserredshot.png')
         
         self.SpriteImage = self.image
         self.rect = self.image.get_rect()

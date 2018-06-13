@@ -25,11 +25,14 @@ from lib.Globals import FixPath
 
 class GameEngine():
     def __init__(self, w=1280, h=720, cap=60):
-        SetPrintLevel(LogLevel.DEBUG)
-        SetLogLevel(LogLevel.DEBUG)
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        SetPrintLevel(LogLevel.WARN)
+        SetLogLevel(LogLevel.WARN)
         Info("Starting init...")
         self.vars = lib.Globals.Vars()
-        self.vars.RootPath = 'D:\\code\\python\\NoudaEnvironment\\NoudaEngine'
+        #self.vars.RootPath = 'D:\\code\\python\\NoudaEnvironment\\NoudaEngine'
+        self.vars.RootPath = dir_path
         Debug('Root Path: {p}'.format(p=self.vars.RootPath))
         self.width, self.height = [w, h]
         os.environ['SDL_VIDEO_CENTERED'] = '1'
