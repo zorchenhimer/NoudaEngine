@@ -25,9 +25,12 @@ class LevelBase():
         self.KeyHandle = KeyHandler(str(self.LevelID))
         self.JoyHandle = JoyHandler(str(self.LevelID))
         self.Background = None
+        self.GameOver = False
+        self.GameOverTimer = 2 * 60
 
     def reset(self):
-        raise NotImplementedError
+        self.GameOver = False
+        self.GameOverTimer = 2 * 60
 
     def init_controls(self):
         raise NotImplementedError
@@ -73,6 +76,16 @@ class LevelControl():
         self.CurrentLevel.draw(bg)
         self.LevelMenu.set_background(bg)
 
+    def show_game_over_menu(self):
+        self.LevelState = LevelState.GAMEOVER
+        self.GameOverMenu.reset()
+        vars = Vars()
+        vars.CurrentHandler = self.GameOverMenu.KeyHandle
+        vars.CurrentHandler_js = self.GameOverMenu.JoyHandle
+        bg = pygame.Surface(pygame.display.get_surface().get_size())
+        self.CurrentLevel.draw(bg)
+        self.GameOverMenu.set_background(bg)
+
     def debug_dump(self):
         Debug(" == Dumping loaded levels ==")
         for l in self.LoadedLevels:
@@ -99,6 +112,8 @@ class LevelControl():
 
     def start_level(self, levelid):
         Debug("Attempting to start level '" + str(levelid) + "'")
+        self.LevelState = LevelState.GAME
+
         vars = Vars()
         for l in self.LoadedLevels:
             if l.LevelID == levelid:
@@ -120,6 +135,10 @@ class LevelControl():
             raise TypeError("Level is not correct type in load_level()!")
 
     def update(self):
+        if self.LevelState is not LevelState.GAMEOVER and self.LevelState is LevelState.GAME and self.CurrentLevel is not None and (self.CurrentLevel.GameOver and self.CurrentLevel.GameOverTimer <= 0):
+            Warn("Setting level state to GameOver")
+            self.show_game_over_menu()
+
         if self.LevelState is LevelState.MAINMENU:
             self.MainMenu.update()
 
@@ -161,6 +180,7 @@ class DefaultLevel(LevelBase):
         LevelBase.__init__(self, 'Default Level')
 
         ## Actual level stuff now
+        self.SpawnInterval = 120
         self.NextSpawn = 0
         self.Enemies = pygame.sprite.Group()
         self.Player = Player()
@@ -173,6 +193,7 @@ class DefaultLevel(LevelBase):
         self.init_controls()
 
     def reset(self):
+        super().reset()
         self.Enemies.empty()
         self.Projectiles.empty()
         self.Player.reset()
@@ -197,7 +218,10 @@ class DefaultLevel(LevelBase):
 
     def update(self):
         if self.NextSpawn <= 0:
-            x = self.rand.randint(pygame.display.get_surface().get_rect().left, pygame.display.get_surface().get_rect().right)
+            x = self.rand.randint(
+                    pygame.display.get_surface().get_rect().left + 50,
+                    pygame.display.get_surface().get_rect().right - 50
+                )
             y = 0
 
             mirror = False
@@ -210,18 +234,36 @@ class DefaultLevel(LevelBase):
 
             e.set_path(p)
             self.Enemies.add(e)
-            self.NextSpawn = 60
+            self.NextSpawn = self.SpawnInterval
         else:
             self.NextSpawn -= 1
 
         self.Enemies.update()
-        self.Player.update()
+
+        if not self.GameOver:
+            self.Player.update()
+
         self.Projectiles.update()
 
         ## TODO: projectile collision from non-player vehicles
         collisions = pygame.sprite.groupcollide(self.Enemies, self.Player.Projectiles, True, False)
         for sp in collisions:
             self.Projectiles.add(Explosion(UnitType.PLAYER, sp.rect.center))
+
+        if not self.Player.dead:
+            for enemy in self.Enemies:
+                col = pygame.sprite.spritecollideany(self.Player, enemy.Projectiles)
+                if col != None:
+                    Debug("{}".format(self.Player.rect.center))
+                    self.Projectiles.add(Explosion(UnitType.ENEMY, self.Player.rect.center))
+                    self.Player.dead = True
+                    self.GameOver = True
+        else:
+            self.GameOverTimer -= 1
+
+            if self.GameOverTimer < 0:
+                #Warn("GAME OVER")
+                self.LevelState = LevelState.GAMEOVER
 
     def draw(self, screen):
         screen.blit(self.Background, (0,0))

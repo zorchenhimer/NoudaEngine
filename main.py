@@ -27,8 +27,8 @@ class GameEngine():
     def __init__(self, w=1280, h=720, cap=60):
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
-        SetPrintLevel(LogLevel.WARN)
-        SetLogLevel(LogLevel.WARN)
+        SetPrintLevel(LogLevel.DEBUG)
+        SetLogLevel(LogLevel.DEBUG)
         Info("Starting init...")
         self.vars = lib.Globals.Vars()
         #self.vars.RootPath = 'D:\\code\\python\\NoudaEnvironment\\NoudaEngine'

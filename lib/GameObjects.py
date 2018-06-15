@@ -113,6 +113,7 @@ class Player(Vehicle):
         self.rect.centerx = pygame.display.get_surface().get_rect().centerx
         self.firing = False
         self.movementSpeed = 9
+        self.dead = False
 
     def reset(self):
         Vehicle.reset(self)
@@ -125,7 +126,17 @@ class Player(Vehicle):
     def StopFire(self):
         self.firing = False
 
+    def draw(self, screen):
+        if self.dead:
+            return
+
+        super().draw(screen)
+
     def update(self):
+        if self.dead:
+            self.firing = False
+            return
+
         ## Keep the vehicle in bounds.
         if self.rect.left < pygame.display.get_surface().get_rect().left:
             self.movingLeft = False
@@ -142,8 +153,9 @@ class Player(Vehicle):
 class Enemy(Vehicle):
     def __init__(self):
         Vehicle.__init__(self)
-        self.firing = True
+        self.firing = False
         self.path = None
+        self.fire_timer = 0
 
     def set_path(self, path):
         self.path = path
@@ -151,6 +163,13 @@ class Enemy(Vehicle):
 
     """ AI stuff goes here """
     def update(self):
+        self.fire_timer += 1
+        if self.fire_timer == 40:
+            self.firing = True
+        elif self.fire_timer > 40:
+            self.firing = False
+            self.fire_timer = 0
+
         self.rect.center = self.path.get_position()
         ## Call this explicitly since we override it.
         Vehicle.update(self)
